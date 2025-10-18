@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:student_life_app/screens/auth/registration.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,7 +25,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // The light grey background color from the design
       backgroundColor: const Color(0xFFF9F9FB),
       body: SafeArea(
         // Use SingleChildScrollView to prevent overflow when the keyboard appears
@@ -52,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // Header Text: "Login here"
                 const Text(
-                  'Login here',
+                  'Login Here',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -152,7 +153,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 Center(
                   child: TextButton(
                     onPressed: () {
-                      // TODO: Navigate to registration screen
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RegistrationScreen(),
+                        ),
+                      );
                     },
                     child: const Text(
                       'Create new account',
@@ -261,7 +267,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // For now, I'll use placeholders.
         child: Icon(
           icon.contains('google')
-              ? Icons.alternate_email
+              ? FontAwesomeIcons.google
               : icon.contains('apple')
               ? Icons.apple
               : Icons.phone_android,

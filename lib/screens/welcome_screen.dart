@@ -1,7 +1,6 @@
-// In welcome_screen.dart
-
 import 'package:flutter/material.dart';
-import 'package:student_life_app/screens/auth/login.dart'; // <-- 1. IMPORT YOUR NEW SCREEN
+import 'package:student_life_app/screens/auth/login.dart'; // IMPORT YOUR NEW SCREEN
+import 'package:student_life_app/screens/auth/registration.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -13,11 +12,7 @@ class WelcomeScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            // ... (your existing Image, Text widgets) ...
-            Image.asset(
-              'assets/images/typing.png',
-              fit: BoxFit.fitWidth,
-            ),
+            Image.asset('assets/images/typing.png', fit: BoxFit.fitWidth),
 
             const SizedBox(height: 40.0),
 
@@ -30,14 +25,15 @@ class WelcomeScreen extends StatelessWidget {
                 color: Color(0xFF333333),
               ),
             ),
-            
-            // ... (more existing widgets) ...
-            
+
             const Spacer(),
 
             // Buttons Section
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 10.0,
+              ),
               child: Row(
                 children: [
                   // Login Button
@@ -47,7 +43,9 @@ class WelcomeScreen extends StatelessWidget {
                         // 2. UPDATE THIS onPressed CALLBACK
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const LoginScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -66,32 +64,38 @@ class WelcomeScreen extends StatelessWidget {
                   const SizedBox(width: 16.0),
                   // Register Button
                   Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // TODO: Handle Register action, maybe navigate to a registration screen
-                    },
-                    // FIX: Add the style and child properties below
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black87, // This sets the text color
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const RegistrationScreen(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor:
+                            Colors.black87, // This sets the text color
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        elevation: 3, // Add a subtle shadow like in the design
+                        side: BorderSide(
+                          color: Colors.grey[300]!,
+                        ), // A light border
                       ),
-                      elevation: 3, // Add a subtle shadow like in the design
-                      side: BorderSide(color: Colors.grey[300]!) // A light border
+                      child: const Text(
+                        'Register',
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ),
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ),
-                ), // Expanded
-
+                  ), // Expanded
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 20.0),
           ],
         ),
