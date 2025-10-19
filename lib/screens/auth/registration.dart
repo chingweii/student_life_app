@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:student_life_app/screens/auth/login.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -173,7 +174,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildSocialButton(icon: Icons.alternate_email), // Google
+                    _buildSocialButton(icon: FontAwesomeIcons.google), // Google
                     const SizedBox(width: 20),
                     _buildSocialButton(icon: Icons.phone_android), // Phone
                     const SizedBox(width: 20),

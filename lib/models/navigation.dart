@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:student_life_app/screens/faq_chatbot/chatbot_screen.dart';
 
 import 'package:student_life_app/screens/home_screen.dart';
-import 'package:student_life_app/screens/profile/profile.dart';
+import 'package:student_life_app/screens/profile/profile_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:student_life_app/screens/messaging/chatlist.dart';
+import 'package:student_life_app/screens/clubs/calendar_screen.dart';
+import 'package:student_life_app/screens/skill_exchange_platform/search_screen.dart';
 
 class NavigationScreen extends StatefulWidget {
   const NavigationScreen({super.key});
@@ -16,11 +20,11 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   // Replace these placeholder widgets with your actual screens
   static const List<Widget> _pages = <Widget>[
-    Center(child: Text('Chat Screen')), // Index 0
-    Center(child: Text('Search Screen')), // Index 1
-    Center(child: Text('Help Screen')), // Index 2
-    Center(child: Text('Calendar Screen')), // Index 3
-    Center(child: Text('Profile Screen')), // Index 4
+    ChatList(), // Index 0
+    SearchScreen(), // Index 1
+    ChatbotScreen(), // Index 2
+    CalendarScreen(), // Index 3
+    ProfileScreen(), // Index 4
   ];
 
   void _onItemTapped(int index) {
@@ -44,9 +48,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
         items: <BottomNavigationBarItem>[
           _buildNavItem('assets/icons/messaging.svg', 0),
           _buildNavItem('assets/icons/search.svg', 1),
-          _buildNavItem('assets/icons/chatbot.svg', 2),
-          _buildNavItem('assets/icons/calendar.svg', 3),
-          _buildNavItem('assets/icons/user.svg', 4),
+          _buildNavItem('assets/icons/chatbox.png', 2),
+          _buildNavItem('assets/icons/calendar.png', 3),
+          _buildNavItem('assets/icons/user.png', 4),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
@@ -54,20 +58,25 @@ class _NavigationScreenState extends State<NavigationScreen> {
     );
   }
 
-  // --- HELPER METHOD TO BUILD EACH ITEM ---
   BottomNavigationBarItem _buildNavItem(String assetName, int index) {
+    Widget buildIcon(String path, Color color) {
+      if (path.endsWith('.svg')) {
+        return SvgPicture.asset(
+          path,
+          width: 28,
+          height: 28,
+          fit: BoxFit.contain,
+          colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+        );
+      } else {
+        return Image.asset(path, width: 28, height: 28, color: color);
+      }
+    }
+
     return BottomNavigationBarItem(
       // The icon when it's NOT selected
-      icon: SvgPicture.asset(
-        // Use SvgPicture.asset here
-        assetName,
-        width: 28,
-        height: 28,
-        colorFilter: const ColorFilter.mode(
-          Colors.black54, // Lighter color
-          BlendMode.srcIn,
-        ),
-      ),
+      icon: buildIcon(assetName, Colors.black54),
+
       // The custom widget for the icon when it IS selected
       activeIcon: Column(
         mainAxisSize: MainAxisSize.min,
@@ -81,16 +90,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
             ),
           ),
           const SizedBox(height: 6),
-          SvgPicture.asset(
-            // And also use SvgPicture.asset here
-            assetName,
-            width: 28,
-            height: 28,
-            colorFilter: const ColorFilter.mode(
-              Colors.black, // Darker color
-              BlendMode.srcIn,
-            ),
-          ),
+          // The icon itself
+          buildIcon(assetName, Colors.black),
         ],
       ),
       label: '',

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:student_life_app/screens/home_screen.dart';
 import 'package:student_life_app/screens/welcome_screen.dart';
-import 'package:student_life_app/screens/navigation.dart';
+import 'package:student_life_app/screens/skill_exchange_platform/search_results_screen.dart';
+import 'package:student_life_app/models/navigation.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,8 +17,14 @@ class MyApp extends StatelessWidget {
       title: 'Student Life App',
       debugShowCheckedModeBanner: false, // This removes the debug banner
       theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        bottomSheetTheme: const BottomSheetThemeData(
+          surfaceTintColor: Colors.transparent,
+          backgroundColor:
+              Colors.white, // You can set the default color here too
+        ),
       ),
 
       // Define the routes for your application
