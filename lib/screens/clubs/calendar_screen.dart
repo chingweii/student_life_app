@@ -5,7 +5,7 @@ import 'package:student_life_app/screens/clubs/event_details_screen.dart';
 
 final Map<DateTime, List<Event>> mockEvents = {
   // Use UTC for consistency
-  DateTime.utc(2025, 10, 19): [
+  DateTime.utc(2025, 11, 24): [
     Event(
       title: 'Designing for Delight: Mastering UI/UX in the Digital Age',
       location: 'University Theatre 1',
@@ -29,7 +29,7 @@ final Map<DateTime, List<Event>> mockEvents = {
       fee: 'RM 50',
     ),
   ],
-  DateTime.utc(2025, 10, 22): [
+  DateTime.utc(2025, 11, 5): [
     Event(
       title: 'Photography Club Weekly Meetup',
       location: 'Student Hub, Level 3',
