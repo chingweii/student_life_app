@@ -22,8 +22,34 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Student Life App',
-      // Make sure this points to your real home screen
+      theme: ThemeData(
+        // This sets the background color for all Scaffolds in your app
+        scaffoldBackgroundColor: Colors.white,
+
+        // This makes the BottomNavigationBar theme consistent too
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Colors.white,
+          elevation: 0,
+        ),
+
+        // This makes your AppBar theme consistent
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          elevation: 0,
+
+          // This sets the default text style for all AppBars
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 34,
+            fontWeight: FontWeight.bold,
+          ),
+
+          // This sets the color for icons (like back buttons)
+          iconTheme: IconThemeData(color: Colors.black),
+        ),
+      ),
       home: NavigationScreen(),
     );
   }

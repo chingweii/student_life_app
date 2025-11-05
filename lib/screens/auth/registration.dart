@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:student_life_app/screens/auth/login.dart';
+import 'package:student_life_app/models/navigation.dart';
+import 'package:student_life_app/screens/auth/verification.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -14,13 +18,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _usernameController = TextEditingController();
 
   @override
   void dispose() {
-    // Clean up controllers to free up resources
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _usernameController.dispose();
     super.dispose();
   }
 
@@ -65,6 +70,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   key: _formKey,
                   child: Column(
                     children: [
+                      // Username Field
+                      TextFormField(
+                        controller: _usernameController,
+                        keyboardType: TextInputType.text,
+                        decoration: _inputDecoration('Username'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a username';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
                       // Email Field
                       TextFormField(
                         controller: _emailController,
@@ -119,15 +137,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Validate returns true if the form is valid
-                      if (_formKey.currentState!.validate()) {
-                        // TODO: Implement registration logic
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Processing Data')),
-                        );
-                      }
-                    },
+                    onPressed: _registerUser,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF8A84A3),
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -244,5 +254,64 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         child: Icon(icon, size: 28, color: Colors.black87),
       ),
     );
+  }
+
+  Future<void> _registerUser() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Processing Data...')));
+
+    try {
+      // create user in firebase auth
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim(),
+          );
+
+      String uid = userCredential.user!.uid;
+      CollectionReference usersCollection = FirebaseFirestore.instance
+          .collection('users');
+
+      await usersCollection.doc(uid).set({
+        'username': _usernameController.text.trim(),
+        'email': _emailController.text.trim(),
+        'created_at': FieldValue.serverTimestamp(),
+      });
+
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const VerificationScreen()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      if (e.code == 'weak-password') {
+        errorMessage = 'The password provided is too weak.';
+      } else if (e.code == 'email-already-in-use') {
+        errorMessage = 'The account already exists for that email.';
+      } else {
+        errorMessage = 'An error occurred: ${e.message}';
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('An unexpected error occurred: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }

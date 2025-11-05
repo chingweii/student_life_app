@@ -43,12 +43,13 @@ class _ChatListState extends State<ChatList> {
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: false,
+        automaticallyImplyLeading: false,
         titleSpacing: 30.0,
         title: const Text(
           'Chats',
           style: TextStyle(
             color: Colors.black,
-            fontSize: 34,
+            fontSize: 30,
             fontWeight: FontWeight.bold,
           ),
         ),

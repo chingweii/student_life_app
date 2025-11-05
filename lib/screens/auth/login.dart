@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:student_life_app/screens/auth/registration.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:student_life_app/models/navigation.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -126,13 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   width: double.infinity, // Makes the button full width
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Validate the form before proceeding
-                      if (_formKey.currentState!.validate()) {
-                        // TODO: Handle login logic
-                        print('Login Successful');
-                      }
-                    },
+                    onPressed: _loginUser,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF8A84A3),
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -203,7 +199,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Helper method to create styled input fields, reducing code duplication
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
@@ -225,7 +220,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Helper method for the "Or continue with" divider
   Widget _buildDivider() {
     return Row(
       children: [
@@ -242,8 +236,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Helper method for the social login buttons.
-  // NOTE: You'll need to add your own icon images to your assets folder.
   Widget _buildSocialButton({required String icon}) {
     return GestureDetector(
       onTap: () {
@@ -276,5 +268,60 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _loginUser() async {
+    // 1. Validate the form
+    if (!_formKey.currentState!.validate()) {
+      return; // Don't proceed if the form is invalid
+    }
+
+    // 2. Show a loading message
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Logging in...')));
+
+    try {
+      // 3. SIGN IN WITH FIREBASE AUTH
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      // 4. LOGIN SUCCESSFUL: Navigate to NavigationScreen
+      if (mounted) {
+        // Use pushReplacement to remove the login screen from the stack
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const NavigationScreen()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      // 5. HANDLE LOGIN ERRORS
+      String errorMessage;
+      if (e.code == 'user-not-found') {
+        errorMessage = 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        errorMessage = 'Wrong password provided.';
+      } else {
+        errorMessage = 'An error occurred. Please try again.';
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
+        );
+      }
+    } catch (e) {
+      // Handle any other unexpected errors
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('An unexpected error occurred: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }

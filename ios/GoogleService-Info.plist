@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CLIENT_ID</key>
+	<string>13149056802-d8ef278qeqjgjg1j3ivvht4gf90ikho0.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.13149056802-d8ef278qeqjgjg1j3ivvht4gf90ikho0</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>13149056802-au6470g9iroefnusct1mv35cdr6jotss.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyAmX0H3Yove3YOgndCQsNv8_QLscHR_E0Y</string>
 	<key>GCM_SENDER_ID</key>
@@ -15,15 +21,15 @@
 	<key>STORAGE_BUCKET</key>
 	<string>student-life-application.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_GCM_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:13149056802:ios:3f04dc44262041aab6ff7b</string>
 </dict>

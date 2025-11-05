@@ -12,7 +12,20 @@
           "package_name": "com.example.student_life_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "13149056802-au6470g9iroefnusct1mv35cdr6jotss.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.student_life_app",
+            "certificate_hash": "74d7aac4640ab0e2e5fef5901d1e4dbd2fcc2de9"
+          }
+        },
+        {
+          "client_id": "13149056802-m5sjvmrnbcmo346oqeeijl1q8vld6kav.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAaJi698kxgvS0WP0xfuHVvGK_8k5nKA4s"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "13149056802-m5sjvmrnbcmo346oqeeijl1q8vld6kav.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "13149056802-d8ef278qeqjgjg1j3ivvht4gf90ikho0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.studentLifeApp"
+              }
+            }
+          ]
         }
       }
     }

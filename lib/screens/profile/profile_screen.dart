@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_life_app/screens/profile/settings_screen.dart';
 
 // --- Data Models ---
 class UserProfile {
@@ -69,7 +70,7 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  _buildProfileHeader(),
+                  _buildProfileHeader(context),
                   const SizedBox(height: 40),
                   _buildSkillsSection(),
                 ],
@@ -82,32 +83,33 @@ class ProfileScreen extends StatelessWidget {
   }
 
   // Helper widget for the top profile section
-  Widget _buildProfileHeader() {
+  Widget _buildProfileHeader(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // 1. LEFT SIDE: The profile picture (made bigger)
         CircleAvatar(
           backgroundColor: const Color.fromARGB(255, 243, 239, 239),
-          radius: 70, // Increased radius for a bigger profile picture
+          radius: 70,
           backgroundImage: AssetImage(userProfile.imageUrl),
         ),
-        const SizedBox(
-          width: 20,
-        ), // Slightly more space between avatar and text
-        // 2. RIGHT SIDE: All the text and buttons (adjusted for smaller sizes)
+
+        const SizedBox(width: 20), // more space between avatar and text
+
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+
             children: [
               Text(
                 userProfile.name,
                 style: const TextStyle(
-                  fontSize: 20, // Slightly smaller font size for the name
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 6), // Reduced space
+
+              const SizedBox(height: 6),
+
               Row(
                 children: [
                   const Icon(
@@ -115,7 +117,9 @@ class ProfileScreen extends StatelessWidget {
                     size: 18,
                     color: Color.fromARGB(255, 68, 68, 68),
                   ), // Smaller icon
+
                   const SizedBox(width: 4),
+
                   Expanded(
                     child: Text(
                       userProfile.degree,
@@ -127,7 +131,9 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ],
               ),
+
               const SizedBox(height: 4), // Reduced space
+
               Row(
                 children: [
                   const Icon(
@@ -135,20 +141,23 @@ class ProfileScreen extends StatelessWidget {
                     size: 18,
                     color: Color.fromARGB(255, 68, 68, 68),
                   ), // Smaller icon
+
                   const SizedBox(width: 4),
+
                   Expanded(
-                    // Use Expanded here too for consistent behavior
                     child: Text(
                       userProfile.location,
                       style: const TextStyle(
                         color: Color.fromARGB(255, 68, 68, 68),
                         fontSize: 13,
-                      ), // Smaller font size
+                      ),
                     ),
                   ),
                 ],
               ),
+
               const SizedBox(height: 18), // Adjusted spacing before buttons
+
               Row(
                 children: [
                   OutlinedButton(
@@ -156,7 +165,7 @@ class ProfileScreen extends StatelessWidget {
                     child: const Text(
                       'Edit Profile',
                       style: TextStyle(fontSize: 13),
-                    ), // Smaller button text
+                    ),
                     style: OutlinedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -164,18 +173,25 @@ class ProfileScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 8,
-                      ), // Adjusted padding
+                      ),
                     ),
                   ),
+
                   const SizedBox(width: 8),
+
                   OutlinedButton(
-                    onPressed: () {},
-                    child: const Icon(Icons.settings, size: 18), // Smaller icon
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SettingsScreen(),
+                        ),
+                      );
+                    },
+                    child: const Icon(Icons.settings, size: 18),
                     style: OutlinedButton.styleFrom(
                       shape: const CircleBorder(),
-                      padding: const EdgeInsets.all(
-                        8,
-                      ), // Padding around the icon
+                      padding: const EdgeInsets.all(8),
                     ),
                   ),
                 ],

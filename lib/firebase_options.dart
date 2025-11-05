@@ -42,12 +42,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyAwAMCUD3dG8Uxm9zE4wKQDBe7fsgazXfE',
-    appId: '1:13149056802:web:cc0515d345f51f65b6ff7b',
+    appId: '1:13149056802:web:8b902763942bf780b6ff7b',
     messagingSenderId: '13149056802',
     projectId: 'student-life-application',
     authDomain: 'student-life-application.firebaseapp.com',
     storageBucket: 'student-life-application.firebasestorage.app',
-    measurementId: 'G-ZYFYY83CS1',
+    measurementId: 'G-38DK94MXLY',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -64,6 +64,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '13149056802',
     projectId: 'student-life-application',
     storageBucket: 'student-life-application.firebasestorage.app',
+    androidClientId: '13149056802-au6470g9iroefnusct1mv35cdr6jotss.apps.googleusercontent.com',
+    iosClientId: '13149056802-d8ef278qeqjgjg1j3ivvht4gf90ikho0.apps.googleusercontent.com',
     iosBundleId: 'com.example.studentLifeApp',
   );
 
@@ -73,6 +75,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '13149056802',
     projectId: 'student-life-application',
     storageBucket: 'student-life-application.firebasestorage.app',
+    androidClientId: '13149056802-au6470g9iroefnusct1mv35cdr6jotss.apps.googleusercontent.com',
+    iosClientId: '13149056802-d8ef278qeqjgjg1j3ivvht4gf90ikho0.apps.googleusercontent.com',
     iosBundleId: 'com.example.studentLifeApp',
   );
 
@@ -85,4 +89,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'student-life-application.firebasestorage.app',
     measurementId: 'G-38DK94MXLY',
   );
+
 }
