@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:student_life_app/screens/auth/login.dart';
 import 'package:student_life_app/models/navigation.dart';
 import 'package:student_life_app/screens/auth/verification.dart';
@@ -19,6 +20,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _usernameController = TextEditingController();
+
+  bool _isSigningIn = false;
 
   @override
   void dispose() {
@@ -41,6 +44,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               horizontal: 24.0,
               vertical: 16.0,
             ),
+
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -184,11 +188,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildSocialButton(icon: FontAwesomeIcons.google), // Google
+                    _buildSocialButton(
+                      icon: FontAwesomeIcons.google,
+                      onPressed: _signInWithGoogle,
+                    ), // Google
+
                     const SizedBox(width: 20),
-                    _buildSocialButton(icon: Icons.phone_android), // Phone
+
+                    _buildSocialButton(
+                      icon: Icons.phone_android,
+                      onPressed: () {},
+                    ), // Phone
+
                     const SizedBox(width: 20),
-                    _buildSocialButton(icon: Icons.apple), // Apple
+
+                    _buildSocialButton(
+                      icon: Icons.apple,
+                      onPressed: () {},
+                    ), // Apple
                   ],
                 ),
               ],
@@ -239,11 +256,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   // Helper method for the social login buttons
-  Widget _buildSocialButton({required IconData icon}) {
+  Widget _buildSocialButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
     return GestureDetector(
-      onTap: () {
-        /* TODO: Handle social login */
-      },
+      onTap: onPressed,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -286,7 +304,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       if (mounted) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const VerificationScreen()),
+          MaterialPageRoute(builder: (context) => const NavigationScreen()),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -311,6 +329,83 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             backgroundColor: Colors.red,
           ),
         );
+      }
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    setState(() {
+      _isSigningIn = true;
+    });
+
+    try {
+      // 1. Trigger the Google Sign-In flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser == null) {
+        // The user canceled the sign-in
+        setState(() {
+          _isSigningIn = false;
+        });
+        return;
+      }
+
+      // 2. Obtain authentication details from the request
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // 3. Create a new Firebase credential
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // 4. Sign in to Firebase with the credential
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithCredential(credential);
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        // 5. Check if user is NEW and save to Firestore
+        // This is crucial for new registrations!
+        if (userCredential.additionalUserInfo?.isNewUser == true) {
+          CollectionReference usersCollection = FirebaseFirestore.instance
+              .collection('users');
+          await usersCollection.doc(user.uid).set({
+            'username':
+                user.displayName ?? 'Google User', // From Google profile
+            'email': user.email, // From Google profile
+            'created_at': FieldValue.serverTimestamp(),
+            // You could also save the profile picture!
+            // 'profile_pic_url': user.photoURL,
+          });
+        }
+
+        // 6. Navigate to the main app screen
+        // Google users are already verified, so we skip VerificationScreen
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            // Assuming NavigationScreen is your main app page
+            MaterialPageRoute(builder: (context) => const NavigationScreen()),
+          );
+        }
+      }
+    } catch (e) {
+      // Handle errors
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to sign in with Google: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSigningIn = false;
+        });
       }
     }
   }

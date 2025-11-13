@@ -46,7 +46,10 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         backgroundColor: Colors.grey[50],
         elevation: 0,
         centerTitle: true,
-        title: const Text('New Chat', style: TextStyle(color: Colors.black)),
+        title: const Text(
+          'New Chat',
+          style: TextStyle(color: Colors.black, fontSize: 25),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.add, color: Colors.black),
