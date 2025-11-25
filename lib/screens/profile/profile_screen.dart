@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:student_life_app/screens/profile/settings_screen.dart';
 
+enum Gender { male, female, other }
+
 // --- Data Models ---
 class UserProfile {
   final String name;
   final String imageUrl;
   final String degree;
   final String location;
+  final Gender gender;
 
   UserProfile({
     required this.name,
     required this.imageUrl,
     required this.degree,
     required this.location,
+    required this.gender,
   });
 }
 
@@ -32,8 +36,9 @@ class Skill {
 final userProfile = UserProfile(
   name: 'Chong Kai Xin',
   imageUrl: 'assets/images/user_avatar.png', // Make sure you have this asset
-  degree: 'Bachelor of Science in Computer Science, Year 3',
+  degree: 'Bachelor of Science in Computer Science',
   location: 'Selangor, Malaysia',
+  gender: Gender.female,
 );
 
 final List<Skill> mockSkills = [
@@ -100,12 +105,19 @@ class ProfileScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
 
             children: [
-              Text(
-                userProfile.name,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    userProfile.name,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 2), // Spacing
+                  _buildGenderIcon(userProfile.gender), // Helper for icon
+                ],
               ),
 
               const SizedBox(height: 6),
@@ -272,6 +284,32 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildGenderIcon(Gender gender) {
+    IconData iconData;
+    Color iconColor;
+
+    switch (gender) {
+      case Gender.male:
+        iconData = Icons.male;
+        iconColor = Colors.blue;
+        break;
+      case Gender.female:
+        iconData = Icons.female;
+        iconColor = Colors.pink;
+        break;
+      case Gender.other:
+        iconData = Icons.transgender; // Or Icons.help_outline
+        iconColor = Colors.purple;
+        break;
+    }
+
+    return Icon(
+      iconData,
+      color: iconColor,
+      size: 22, // Adjust size to match the text
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'search_results_screen.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
@@ -17,7 +18,7 @@ class SearchScreen extends StatelessWidget {
               const SizedBox(height: 20),
 
               // search bar
-              _buildSearchBar(),
+              _buildSearchBar(context),
               const SizedBox(height: 32),
 
               // title
@@ -66,7 +67,9 @@ class SearchScreen extends StatelessWidget {
   }
 
   // Helper widget for the search bar
-  Widget _buildSearchBar() {
+  // Inside SearchScreen class...
+
+  Widget _buildSearchBar(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       decoration: BoxDecoration(
@@ -74,10 +77,26 @@ class SearchScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(30.0),
         border: Border.all(color: Colors.grey[300]!),
       ),
-      child: const TextField(
-        decoration: InputDecoration(
+      child: TextField(
+        textInputAction:
+            TextInputAction.search, // Change keyboard button to 'Search'
+        onSubmitted: (value) {
+          if (value.isNotEmpty) {
+            // FIX START: Format the text before sending it
+            String formattedSearch = _toTitleCase(value.trim());
+            // Navigate to results page with the search query
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    SearchResultsScreen(searchQuery: formattedSearch),
+              ),
+            );
+          }
+        },
+        decoration: const InputDecoration(
           icon: Icon(Icons.search, color: Colors.grey),
-          hintText: 'Search by skills',
+          hintText: 'Search by exact skill (e.g. Public Speaking)',
           border: InputBorder.none,
         ),
       ),
@@ -123,5 +142,16 @@ class SearchScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _toTitleCase(String text) {
+    if (text.isEmpty) return text;
+    return text
+        .split(' ')
+        .map((word) {
+          if (word.isEmpty) return word;
+          return word[0].toUpperCase() + word.substring(1).toLowerCase();
+        })
+        .join(' ');
   }
 }

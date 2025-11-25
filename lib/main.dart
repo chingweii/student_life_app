@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:student_life_app/models/navigation.dart';
+import 'package:student_life_app/navigation.dart';
 import 'package:student_life_app/screens/welcome_screen.dart';
 import 'package:student_life_app/screens/skill_exchange_platform/search_results_screen.dart';
 

@@ -1,31 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:student_life_app/models/chatbot_message.dart';
-
-// In your chatbot screen file
-final List<ChatbotMessage> mockMessages = [
-  ChatbotMessage(
-    user: ChatUser.user,
-    avatarUrl: 'assets/images/user_avatar.png',
-    text: 'What clubs are available at Sunway University?',
-  ),
-  ChatbotMessage(
-    user: ChatUser.bot,
-    avatarUrl: 'assets/images/bot_avatar.png',
-    text:
-        'Sunway University has a wide range of clubs, including academic clubs, cultural societies, sports teams, volunteering groups, and special interest clubs like photography or entrepreneurship. You can view the full list in the "Clubs & Societies" section of the app.',
-  ),
-  ChatbotMessage(
-    user: ChatUser.user,
-    avatarUrl: 'assets/images/user_avatar.png',
-    text: 'How can I find out what events are happening this week?',
-  ),
-  ChatbotMessage(
-    user: ChatUser.bot,
-    avatarUrl: 'assets/images/bot_avatar.png',
-    text:
-        'Check the "Events" section for a calendar and list view of all upcoming events. You can filter by date, category, or club.',
-  ),
-];
+import 'package:firebase_vertexai/firebase_vertexai.dart';
 
 class ChatbotScreen extends StatefulWidget {
   const ChatbotScreen({super.key});
@@ -35,8 +11,86 @@ class ChatbotScreen extends StatefulWidget {
 }
 
 class _ChatbotScreenState extends State<ChatbotScreen> {
-  // Use the mock data for now
-  final List<ChatbotMessage> _messages = mockMessages;
+  final List<ChatbotMessage> _messages = [];
+  final TextEditingController _textController = TextEditingController();
+  bool _isLoading = false;
+
+  final model = FirebaseVertexAI.instance.generativeModel(
+    model: 'gemini-2.0-flash-exp',
+    systemInstruction: Content.system(
+      'You are a helpful assistant for Sunway University. '
+      'Your name is "Leo". '
+      'You must only answer questions related to Sunway University, its clubs, events, academics, and campus life. '
+      'If the user asks about anything else, politely decline by saying "I can only help with questions about Sunway University."',
+    ),
+  );
+
+  late final ChatSession _chat;
+
+  @override
+  void initState() {
+    super.initState();
+    // Start the chat session when the screen loads
+    _chat = model.startChat();
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  void _handleSend() {
+    final text = _textController.text;
+    if (text.isEmpty) return;
+
+    // 1. Add the user's message to the list
+    final userMessage = ChatbotMessage(
+      user: ChatUser.user,
+      avatarUrl: 'assets/images/user_avatar.png',
+      text: text,
+    );
+
+    setState(() {
+      _messages.add(userMessage);
+      _isLoading = true; // Show loading indicator
+    });
+
+    // 2. Clear the input field
+    _textController.clear();
+
+    _callGeminiAPI(text);
+  }
+
+  Future<void> _callGeminiAPI(String userQuery) async {
+    try {
+      // 1. Send the message using the ongoing chat session
+      final response = await _chat.sendMessage(Content.text(userQuery));
+
+      final botResponse = ChatbotMessage(
+        user: ChatUser.bot,
+        avatarUrl: 'assets/images/bot_avatar.png',
+        text: response.text ?? "Sorry, I couldn't get a response.",
+      );
+
+      setState(() {
+        _messages.add(botResponse);
+      });
+    } catch (e) {
+      final errorResponse = ChatbotMessage(
+        user: ChatUser.bot,
+        avatarUrl: 'assets/images/bot_avatar.png',
+        text: 'Error: ${e.toString()}',
+      );
+      setState(() {
+        _messages.add(errorResponse);
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +129,23 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               },
             ),
           ),
+
+          if (_isLoading)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 8.0,
+                horizontal: 16.0,
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: AssetImage('assets/images/bot_avatar.png'),
+                  ),
+                  SizedBox(width: 8),
+                  Text('Leo is typing...'),
+                ],
+              ),
+            ),
 
           // 2. The suggestion buttons
           _buildSuggestionChips(),
@@ -120,7 +191,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     );
   }
 
-  // Widget for the Bot's message bubble
+  // copy paste of bot message
   Widget _buildBotMessage(ChatbotMessage message) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -148,7 +219,21 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.copy_outlined, size: 18),
-                      onPressed: () {},
+                      onPressed: () {
+                        // 1. Get the text from the message object
+                        final String textToCopy = message.text;
+
+                        // 2. Use the Clipboard service to copy the text
+                        Clipboard.setData(ClipboardData(text: textToCopy));
+
+                        // 3. (Optional but recommended) Show a confirmation message
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Copied to clipboard!'),
+                            duration: Duration(seconds: 1),
+                          ),
+                        );
+                      },
                     ),
                     IconButton(
                       icon: const Icon(Icons.share_outlined, size: 18),
@@ -164,7 +249,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     );
   }
 
-  // Widget for the suggestion chips
+  // history and regenerate response
   Widget _buildSuggestionChips() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -182,7 +267,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     );
   }
 
-  // Widget for the bottom text input bar
+  // input text bar
   Widget _buildTextInput() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -191,10 +276,12 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         children: [
           Expanded(
             child: TextField(
+              controller: _textController,
               decoration: InputDecoration(
                 hintText: 'Message...',
                 border: InputBorder.none,
               ),
+              onSubmitted: (value) => _handleSend(),
             ),
           ),
           IconButton(icon: const Icon(Icons.mic_none), onPressed: () {}),
@@ -202,7 +289,10 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             icon: const Icon(Icons.sentiment_satisfied_alt_outlined),
             onPressed: () {},
           ),
-          IconButton(icon: const Icon(Icons.image_outlined), onPressed: () {}),
+          IconButton(
+            icon: const Icon(Icons.image_outlined),
+            onPressed: _handleSend,
+          ),
         ],
       ),
     );

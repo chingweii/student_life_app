@@ -1,4 +1,4 @@
-import 'package:student_life_app/models/event.dart';
+import 'package:student_life_app/models/event_model.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:student_life_app/screens/clubs/event_details_screen.dart';
@@ -29,7 +29,7 @@ final Map<DateTime, List<Event>> mockEvents = {
       fee: 'RM 50',
     ),
   ],
-  DateTime.utc(2025, 11, 5): [
+  DateTime.utc(2025, 12, 6): [
     Event(
       title: 'Photography Club Weekly Meetup',
       location: 'Student Hub, Level 3',

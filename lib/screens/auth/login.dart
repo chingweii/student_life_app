@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:student_life_app/screens/auth/registration.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:student_life_app/models/navigation.dart';
+import 'package:student_life_app/navigation.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
