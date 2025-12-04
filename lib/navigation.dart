@@ -16,12 +16,12 @@ class NavigationScreen extends StatefulWidget {
 class _NavigationScreenState extends State<NavigationScreen> {
   int _selectedIndex = 0;
 
-  // Replace these placeholder widgets with your actual screens
+  // --- CHANGE 1: Swap the screens here ---
   static const List<Widget> _pages = <Widget>[
     ChatList(), // Index 0
     SearchScreen(), // Index 1
-    ChatbotScreen(), // Index 2
-    CalendarScreen(), // Index 3
+    CalendarScreen(), // Index 2 (Moved Up)
+    ChatbotScreen(), // Index 3 (Moved Down)
     ProfileScreen(), // Index 4
   ];
 
@@ -36,18 +36,23 @@ class _NavigationScreenState extends State<NavigationScreen> {
     return Scaffold(
       body: _pages.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
-        // --- STYLING TO MATCH YOUR DESIGN ---
         backgroundColor: Colors.white,
-        type: BottomNavigationBarType.fixed, // Ensures all items are visible
-        showSelectedLabels: false, // Hides text labels
-        showUnselectedLabels: false, // Hides text labels
-        elevation: 0, // Removes the shadow
-        // --- THE NAVIGATION ITEMS ---
+        type: BottomNavigationBarType.fixed,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        elevation: 0,
+
+        // --- CHANGE 2: Swap the icons here ---
         items: <BottomNavigationBarItem>[
           _buildNavItem('assets/icons/messaging.svg', 0),
           _buildNavItem('assets/icons/search.svg', 1),
-          _buildNavItem('assets/icons/chatbox.png', 2),
-          _buildNavItem('assets/icons/calendar.png', 3),
+
+          // Calendar is now Index 2
+          _buildNavItem('assets/icons/calendar.png', 2),
+
+          // Chatbox is now Index 3
+          _buildNavItem('assets/icons/chatbox.png', 3),
+
           _buildNavItem('assets/icons/user.png', 4),
         ],
         currentIndex: _selectedIndex,
@@ -72,10 +77,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
     }
 
     return BottomNavigationBarItem(
-      // The icon when it's NOT selected
       icon: buildIcon(assetName, Colors.black54),
-
-      // The custom widget for the icon when it IS selected
       activeIcon: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -88,7 +90,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
             ),
           ),
           const SizedBox(height: 6),
-          // The icon itself
           buildIcon(assetName, Colors.black),
         ],
       ),

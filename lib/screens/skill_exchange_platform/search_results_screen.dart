@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_life_app/models/person_model.dart';
+import 'package:student_life_app/screens/messaging/messaging.dart';
 
 class SearchResultsScreen extends StatefulWidget {
-  final String searchQuery; // Receive the query
+  final String searchQuery; // e.g., "Sports" or "Cheryl"
 
   const SearchResultsScreen({super.key, required this.searchQuery});
 
@@ -13,6 +14,50 @@ class SearchResultsScreen extends StatefulWidget {
 
 class _SearchResultsScreenState extends State<SearchResultsScreen> {
   late TextEditingController _searchController;
+
+  // --- 1. DEFINE YOUR CATEGORIES HERE ---
+  // This tells the app what skills belong to each category.
+  // Make sure all keywords here are LOWERCASE.
+  final Map<String, List<String>> _categoryDefinitions = {
+    'languages': [
+      'english',
+      'mandarin',
+      'malay',
+      'japanese',
+      'korean',
+      'french',
+      'spanish',
+      'german',
+    ],
+    'sports': [
+      'badminton',
+      'basketball',
+      'volleyball',
+      'football',
+      'soccer',
+      'tennis',
+      'swimming',
+      'jogging',
+      'gym',
+    ],
+    'interpersonal skills': [
+      'communication',
+      'teamwork',
+      'leadership',
+      'empathy',
+      'active listening',
+      'negotiation',
+    ],
+    'professional skills': [
+      'public speaking',
+      'project management',
+      'python',
+      'flutter',
+      'data analysis',
+      'marketing',
+      'design',
+    ],
+  };
 
   @override
   void initState() {
@@ -42,13 +87,14 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // --- The Search Bar (Visual only in this context, or functional if you reload) ---
+          const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                hintText: "Search by name or skill...",
                 filled: true,
                 fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
@@ -57,19 +103,21 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                 ),
                 contentPadding: EdgeInsets.zero,
               ),
+              textInputAction: TextInputAction.search,
               onSubmitted: (val) {
-                // Optional: Allow searching again from this screen
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => SearchResultsScreen(searchQuery: val),
-                  ),
-                );
+                if (val.isNotEmpty) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          SearchResultsScreen(searchQuery: val.trim()),
+                    ),
+                  );
+                }
               },
             ),
           ),
           const SizedBox(height: 24),
-
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
@@ -79,29 +127,68 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
           ),
           const SizedBox(height: 16),
 
-          // --- The Firestore List ---
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              // QUERY LOGIC:
-              // We look into 'users' collection where 'skills' array contains the search text.
-              // Note: Firestore queries are case-sensitive.
               stream: FirebaseFirestore.instance
                   .collection('users')
-                  .where('skills', arrayContains: widget.searchQuery)
                   .snapshots(),
               builder: (context, snapshot) {
-                // 1. Handle Errors
-                if (snapshot.hasError) {
+                if (snapshot.hasError)
                   return Center(child: Text('Error: ${snapshot.error}'));
-                }
-
-                // 2. Handle Loading
-                if (snapshot.connectionState == ConnectionState.waiting) {
+                if (snapshot.connectionState == ConnectionState.waiting)
                   return const Center(child: CircularProgressIndicator());
-                }
 
-                // 3. Handle Empty Data
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                final allDocs = snapshot.data!.docs;
+                final String query = widget.searchQuery.toLowerCase();
+
+                // --- 2. INTELLIGENT FILTERING LOGIC ---
+                final filteredDocs = allDocs.where((doc) {
+                  final data = doc.data() as Map<String, dynamic>;
+
+                  // A. PREPARE DATA
+                  String firstName = (data['first_name'] ?? '')
+                      .toString()
+                      .toLowerCase();
+                  String lastName = (data['last_name'] ?? '')
+                      .toString()
+                      .toLowerCase();
+                  String fullName = "$firstName $lastName".trim();
+
+                  List<dynamic> userSkills = [];
+                  if (data['skills'] != null && data['skills'] is List) {
+                    userSkills = data['skills'];
+                  }
+
+                  // B. CHECK IF THIS IS A CATEGORY SEARCH (e.g., "Sports")
+                  if (_categoryDefinitions.containsKey(query)) {
+                    // Get the list of related skills (e.g., basketball, badminton)
+                    List<String> relatedSkills = _categoryDefinitions[query]!;
+
+                    // Check if user has ANY of these related skills
+                    bool hasRelatedSkill = userSkills.any((skill) {
+                      return relatedSkills.contains(
+                        skill.toString().toLowerCase(),
+                      );
+                    });
+
+                    if (hasRelatedSkill) return true;
+                  }
+
+                  // C. STANDARD SEARCH (Name or Specific Skill)
+                  bool isNameMatch =
+                      firstName.contains(query) ||
+                      lastName.contains(query) ||
+                      fullName.contains(query);
+
+                  bool isDirectSkillMatch = userSkills.any((skill) {
+                    return skill.toString().toLowerCase() == query;
+                  });
+
+                  return isNameMatch || isDirectSkillMatch;
+                }).toList();
+                // --------------------------------------
+
+                if (filteredDocs.isEmpty) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -113,7 +200,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          'No users found with skill "${widget.searchQuery}"',
+                          'No results for "${widget.searchQuery}"',
                           style: TextStyle(color: Colors.grey[600]),
                         ),
                       ],
@@ -121,14 +208,10 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                   );
                 }
 
-                // 4. Display Data
-                final docs = snapshot.data!.docs;
-
                 return ListView.builder(
-                  itemCount: docs.length,
+                  itemCount: filteredDocs.length,
                   itemBuilder: (context, index) {
-                    // Convert Firestore doc to our Person object
-                    Person person = Person.fromFirestore(docs[index]);
+                    Person person = Person.fromFirestore(filteredDocs[index]);
                     return _buildPersonCard(person);
                   },
                 );
@@ -140,7 +223,6 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
     );
   }
 
-  // Helper widget for a single person card (Kept your original styling)
   Widget _buildPersonCard(Person person) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -150,14 +232,12 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CircleAvatar(
               radius: 30,
-              // Handle network image vs asset image safely
               backgroundImage: NetworkImage(person.imageUrl),
-              onBackgroundImageError: (_, __) {
-                // Fallback if image fails
-              },
+              onBackgroundImageError: (_, __) {},
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -172,7 +252,6 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  // Display skills safely
                   Wrap(
                     spacing: 8.0,
                     runSpacing: 8.0,
@@ -193,13 +272,33 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                 ],
               ),
             ),
-            IconButton(
-              icon: Icon(Icons.person_add_outlined, color: Colors.grey[600]),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: Icon(Icons.chat_bubble_outline, color: Colors.grey[600]),
-              onPressed: () {},
+            Column(
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.person_add_outlined,
+                    color: Colors.grey[600],
+                  ),
+                  onPressed: () {},
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.chat_bubble_outline,
+                    color: Colors.grey[600],
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MessagingScreen(
+                          recipientName: person.name,
+                          recipientImage: person.imageUrl,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),

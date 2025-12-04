@@ -5,15 +5,16 @@ class Person {
   final String imageUrl;
   final List<String> skills;
   final String email;
+  final String gender;
 
   Person({
     required this.name,
     required this.imageUrl,
     required this.skills,
     required this.email,
+    required this.gender,
   });
 
-  // Factory constructor to create a Person from a Firestore Document
   factory Person.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
@@ -23,8 +24,16 @@ class Person {
       // Handle potential null image
       imageUrl: data['profile picture'] ?? 'https://via.placeholder.com/150',
       // Safely convert dynamic list to List<String>
-      skills: List<String>.from(data['skills'] ?? []),
+      skills: (data['skills'] as List<dynamic>? ?? [])
+          .map((skill) => _toTitleCase(skill.toString()))
+          .toList(),
       email: data['email'] ?? '',
+      gender: data['gender'] ?? 'Unknown',
     );
+  }
+
+  static String _toTitleCase(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1).toLowerCase();
   }
 }

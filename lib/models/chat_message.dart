@@ -10,6 +10,4 @@ class ChatMessage {
     required this.time,
     required this.imageUrl,
   });
-
-  // You can add the .fromJson factory constructor here later
 }

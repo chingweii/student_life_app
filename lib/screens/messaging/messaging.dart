@@ -1,26 +1,58 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(
-    const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MessagingScreen(),
-    ),
-  );
-}
-
 class MessagingScreen extends StatefulWidget {
-  const MessagingScreen({super.key});
+  final String recipientName;
+  final String recipientImage;
+
+  const MessagingScreen({
+    super.key,
+    required this.recipientName,
+    required this.recipientImage,
+  });
 
   @override
   State<MessagingScreen> createState() => _MessagingScreenState();
 }
 
 class _MessagingScreenState extends State<MessagingScreen> {
-  // Colors extracted from the image
-  final Color _senderColor = const Color(0xFF867F95); // Muted Purple
-  final Color _receiverColor = const Color(0xFFEAEAEA); // Light Grey
-  final Color _backgroundColor = const Color(0xFFFFFFFF); // White
+  final Color _senderColor = const Color(0xFF867F95);
+  final Color _backgroundColor = const Color(0xFFFFFFFF);
+
+  // 1. Controller to read the text field
+  final TextEditingController _messageController = TextEditingController();
+
+  // 2. List to store messages.
+  // We start with a welcome message. 'isSender': true means 'Me'.
+  final List<Map<String, dynamic>> _messages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Add an initial greeting
+    _messages.add({
+      'text': "Hi ${widget.recipientName}! I found you on the search page.",
+      'isSender': true,
+    });
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose(); // Clean up controller
+    super.dispose();
+  }
+
+  // 3. Function to handle sending
+  void _sendMessage() {
+    if (_messageController.text.trim().isEmpty) return;
+
+    setState(() {
+      _messages.add({
+        'text': _messageController.text.trim(),
+        'isSender': true, // New messages are always from "Me"
+      });
+      _messageController.clear(); // Clear the input box
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,23 +60,21 @@ class _MessagingScreenState extends State<MessagingScreen> {
       backgroundColor: _backgroundColor,
       appBar: AppBar(
         backgroundColor: _backgroundColor,
-        elevation: 0.5, // Slight shadow line
+        elevation: 0.5,
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios_new,
             color: Colors.black,
             size: 20,
           ),
-          onPressed: () {
-            // Handle back action
-          },
+          onPressed: () => Navigator.pop(context),
         ),
         title: Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Text(
-                "Cheryl Tan Mei Ling",
-                style: TextStyle(
+                widget.recipientName,
+                style: const TextStyle(
                   color: Colors.black,
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
@@ -55,10 +85,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
             const SizedBox(width: 10),
             CircleAvatar(
               radius: 16,
-              backgroundImage: const NetworkImage(
-                'https://i.pravatar.cc/150?img=5',
-              ),
-              // Replace with your actual asset image
+              backgroundImage: NetworkImage(widget.recipientImage),
               backgroundColor: Colors.grey[300],
             ),
           ],
@@ -67,59 +94,25 @@ class _MessagingScreenState extends State<MessagingScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Chat List Area
+            // 4. Dynamic Chat List
             Expanded(
-              child: ListView(
+              child: ListView.builder(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 20,
                 ),
-                children: [
-                  // Date Stamp
-                  const Center(
-                    child: Text(
-                      "Nov 30, 2023, 9:41 AM",
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Message 1 (Sender)
-                  _buildSenderMessage("Hi, I'm Jie Er, nice to meet you!"),
-
-                  const SizedBox(height: 20),
-
-                  // Message Group 1 (Receiver)
-                  _buildReceiverGroup([
-                    "Heyy",
-                    "I'm Mei Ling",
-                    "Nice to meet you too!",
-                  ]),
-
-                  const SizedBox(height: 20),
-
-                  // Message Group 2 (Sender)
-                  _buildSenderMessage(
-                    "I found that you used to be an emcee in quite a lot of event and I wish to practice my public speaking!",
-                  ),
-                  const SizedBox(height: 5),
-                  _buildSenderMessage(
-                    "And you are looking for a computer science study partner right?",
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Message Group 2 (Receiver)
-                  _buildReceiverGroup([
-                    "Oh ya!",
-                    "It's great someone willing to reach out to me...",
-                    "When are you free so we can meet physically for further discussion?",
-                  ]),
-                ],
+                itemCount: _messages.length,
+                itemBuilder: (context, index) {
+                  final msg = _messages[index];
+                  // Use specific builder based on who sent it
+                  if (msg['isSender']) {
+                    return _buildSenderMessage(msg['text']);
+                  } else {
+                    return _buildReceiverMessage(msg['text']);
+                  }
+                },
               ),
             ),
-
-            // Bottom Input Bar
             _buildInputArea(),
           ],
         ),
@@ -127,15 +120,11 @@ class _MessagingScreenState extends State<MessagingScreen> {
     );
   }
 
-  // Widget for Sender Bubbles (Purple, Right Aligned)
   Widget _buildSenderMessage(String message) {
     return Align(
       alignment: Alignment.centerRight,
       child: Container(
-        margin: const EdgeInsets.only(
-          bottom: 4,
-          left: 60,
-        ), // Left margin to prevent full width
+        margin: const EdgeInsets.only(bottom: 10, left: 60),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: _senderColor,
@@ -154,43 +143,30 @@ class _MessagingScreenState extends State<MessagingScreen> {
     );
   }
 
-  // Widget for Receiver Groups (Avatar + Multiple Grey Bubbles)
-  Widget _buildReceiverGroup(List<String> messages) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const CircleAvatar(
-          radius: 14,
-          backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=5'),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: messages.map((msg) {
-              return Container(
-                margin: const EdgeInsets.only(bottom: 4, right: 40),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: _receiverColor,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Text(
-                  msg,
-                  style: const TextStyle(color: Colors.black, fontSize: 15),
-                ),
-              );
-            }).toList(),
+  // Added a receiver builder just in case you expand later
+  Widget _buildReceiverMessage(String message) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10, right: 60),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: const Color(0xFFEAEAEA),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+            bottomLeft: Radius.circular(5),
+            bottomRight: Radius.circular(20),
           ),
         ),
-      ],
+        child: Text(
+          message,
+          style: const TextStyle(color: Colors.black87, fontSize: 15),
+        ),
+      ),
     );
   }
 
-  // Widget for the Bottom Input Field
   Widget _buildInputArea() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -209,32 +185,25 @@ class _MessagingScreenState extends State<MessagingScreen> {
                 borderRadius: BorderRadius.circular(25),
                 border: Border.all(color: Colors.grey.shade300),
               ),
-              child: const Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: "Message...",
-                        hintStyle: TextStyle(color: Colors.grey),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.only(bottom: 5),
-                      ),
-                    ),
-                  ),
-                ],
+              child: TextField(
+                controller: _messageController, // 5. Connected Controller
+                decoration: const InputDecoration(
+                  hintText: "Message...",
+                  hintStyle: TextStyle(color: Colors.grey),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.only(bottom: 5),
+                ),
+                // Allow sending by pressing "Enter" on keyboard
+                onSubmitted: (_) => _sendMessage(),
               ),
             ),
           ),
           const SizedBox(width: 15),
-          const Icon(Icons.mic_none_outlined, color: Colors.grey, size: 28),
-          const SizedBox(width: 15),
-          const Icon(
-            Icons.sentiment_satisfied_alt_outlined,
-            color: Colors.grey,
-            size: 28,
+          // 6. Connected Send Button
+          GestureDetector(
+            onTap: _sendMessage,
+            child: const Icon(Icons.send, color: Color(0xFF867F95), size: 28),
           ),
-          const SizedBox(width: 15),
-          const Icon(Icons.image_outlined, color: Colors.grey, size: 28),
         ],
       ),
     );
