@@ -22,11 +22,9 @@ class Person {
       // Combine first and last name
       name: '${data['first_name'] ?? ''} ${data['last_name'] ?? ''}'.trim(),
       // Handle potential null image
-      imageUrl: data['profile picture'] ?? 'https://via.placeholder.com/150',
+      imageUrl: data['profile_pic_url'] ?? data['profile picture'] ?? '',
       // Safely convert dynamic list to List<String>
-      skills: (data['skills'] as List<dynamic>? ?? [])
-          .map((skill) => _toTitleCase(skill.toString()))
-          .toList(),
+      skills: List<String>.from(data['skills'] ?? []),
       email: data['email'] ?? '',
       gender: data['gender'] ?? 'Unknown',
     );

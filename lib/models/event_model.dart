@@ -1,54 +1,48 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Event {
+  final String id;
   final String title;
   final String location;
   final String time;
-  // bannerUrl removed
   final String description;
   final String speakerInfo;
   final String fee;
   final DateTime date;
 
   Event({
+    required this.id,
     required this.title,
     required this.location,
     required this.time,
-    // bannerUrl removed
     required this.description,
     required this.speakerInfo,
     required this.fee,
     required this.date,
   });
 
-  // Factory to convert Firestore JSON into an Event object
-  factory Event.fromFirestore(Map<String, dynamic> data) {
-    // Handle date: It might be a Timestamp (from Firestore) or a String
-    DateTime parsedDate;
-
+  factory Event.fromFirestore(Map<String, dynamic> data, [String? documentId]) {
+    // 1. Safe Date Parsing (Prevents crash if date is weird)
+    DateTime parsedDate = DateTime.now();
     try {
       if (data['date'] is Timestamp) {
         parsedDate = (data['date'] as Timestamp).toDate();
       } else if (data['date'] is String) {
-        // --- SAFE PARSING START ---
-        // Try to parse standard format
-        parsedDate = DateTime.parse(data['date']);
-      } else {
-        parsedDate = DateTime.now();
+        // Simple parser, fallback to now() if fails
+        parsedDate = DateTime.tryParse(data['date']) ?? DateTime.now();
       }
     } catch (e) {
-      // If parsing fails, don't crash! Just use current date.
-      print("⚠️ Date Error for event '${data['title']}': $e");
-      parsedDate = DateTime.now();
+      print("Date parse error: $e");
     }
-    // --- SAFE PARSING END ---
 
     return Event(
-      title: data['title'] ?? '',
-      // Checks 'venue' first, then 'location'
-      location: data['venue'] ?? data['location'] ?? '',
+      // --- THE FIX IS HERE ---
+      // We use '??' to provide a backup Empty String if the data is null.
+      // We also check data['venue'] because your JSON uses "venue", not "location"
+      id: documentId ?? data['id'] ?? '', 
+      title: data['title'] ?? 'No Title',
+      location: data['venue'] ?? data['location'] ?? 'Unknown Location', 
       time: data['time'] ?? '',
-      // bannerUrl removed
       description: data['description'] ?? '',
       speakerInfo: data['speakerInfo'] ?? '',
       fee: data['fee'] ?? '',

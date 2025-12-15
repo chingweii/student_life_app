@@ -1,22 +1,6 @@
 [
   {
     "id": "evt_001",
-    "title": "Designing for Delight: Mastering UI/UX in the Digital Age",
-    "description": "In today's fast-paced digital world, creating visually appealing designs is no longer enough - users expect intuitive, seamless, and delightful experiences. This event explores how thoughtful user interface (UI) and user experience (UX) design can elevate products.",
-    "whatToExpect": [
-      "Keynote talks by experienced UI/UX professionals",
-      "Hands-on design challenges and live critiques",
-      "Tips on designing for accessibility, responsiveness, and engagement",
-      "Networking opportunities with fellow designers"
-    ],
-    "venue": "Innovation Hub, Level 2",
-    "date": "21 November 2025",
-    "time": "2:00pm to 4:00pm",
-    "speakerInfo": "Ava Lim is a seasoned UX strategist and award-winning product designer with over 10 years of experience crafting intuitive digital experiences for global tech start-ups.",
-    "fee": "RM 10"
-  },
-  {
-    "id": "evt_002",
     "title": "The Future of Fintech: Blockchain & Beyond",
     "description": "An in-depth look at how blockchain technology is disrupting traditional finance. We will cover cryptocurrencies, smart contracts, and the future of decentralized finance (DeFi) in Southeast Asia.",
     "whatToExpect": [
@@ -27,7 +11,22 @@
     "venue": "Lecture Hall A",
     "date": "15 March 2025",
     "time": "10:00am to 12:00pm",
-    "speakerInfo": "Johan Razak, CTO of LedgerMy, is a blockchain enthusiast and former banking consultant who specializes in secure digital transactions.",
+    "speakerInfo": "Johan Razak, the Chief Technology Officer at LedgerMy holding a Bachelor of Computer Science (Fintech) from APU, specializing in secure digital transactions and smart contracts.",
+    "fee": "Free"
+  },
+  {
+    "id": "evt_002",
+    "title": "Mental Health Matters: Managing Exam Stress",
+    "description": "A crucial seminar for students facing academic pressure. Learn coping mechanisms, breathing techniques, and how to maintain a healthy work-life balance during finals week.",
+    "whatToExpect": [
+      "Guided mindfulness meditation session",
+      "Expert advice from clinical psychologists",
+      "Peer support group activities"
+    ],
+    "venue": "Student Center, Room 101",
+    "date": "15 March 2025",
+    "time": "9:30am to 11:30am",
+    "speakerInfo": "Dr. Amirah Syafiqah, a Clinical Psychologist holding a PhD in Psychology from Universiti Kebangsaan Malaysia (UKM), specializing in adolescent mental health and stress management.",
     "fee": "Free"
   },
   {
@@ -42,26 +41,11 @@
     "venue": "Business Faculty Auditorium",
     "date": "15 March 2025",
     "time": "11:00am to 1:00pm",
-    "speakerInfo": "Sarah Chen, Founder of GreenEats, has successfully raised Series B funding and mentors young entrepreneurs across Asia.",
+    "speakerInfo": "Sarah Chen, a serial entrepreneur holding a Bachelor of Business Administration from Sunway University, who successfully raised Series B funding for her startup GreenEats.",
     "fee": "RM 15"
   },
   {
     "id": "evt_004",
-    "title": "Mental Health Matters: Managing Exam Stress",
-    "description": "A crucial seminar for students facing academic pressure. Learn coping mechanisms, breathing techniques, and how to maintain a healthy work-life balance during finals week.",
-    "whatToExpect": [
-      "Guided mindfulness meditation session",
-      "Expert advice from clinical psychologists",
-      "Peer support group activities"
-    ],
-    "venue": "Student Center, Room 101",
-    "date": "15 March 2025",
-    "time": "9:30am to 11:30am",
-    "speakerInfo": "Dr. Amirah Syafiqah is a clinical psychologist specializing in adolescent mental health and stress management.",
-    "fee": "Free"
-  },
-  {
-    "id": "evt_005",
     "title": "Code & Coffee: Python for Beginners",
     "description": "A relaxed, beginner-friendly coding session. Bring your laptop and learn the basics of Python automation while enjoying free premium coffee.",
     "whatToExpect": [
@@ -72,11 +56,11 @@
     "venue": "Computer Lab 4",
     "date": "02 April 2025",
     "time": "3:00pm to 5:00pm",
-    "speakerInfo": "Tan Wei Ming, a Senior Software Engineer at Grab, loves teaching coding fundamentals to non-CS students.",
+    "speakerInfo": "Tan Wei Ming, a Senior Software Engineer at Grab holding a Bachelor of Software Engineering from Universiti Malaya, who is passionate about teaching coding fundamentals to non-CS students.",
     "fee": "RM 5"
   },
   {
-    "id": "evt_006",
+    "id": "evt_005",
     "title": "Sustainable Living: Zero Waste Campus",
     "description": "Join the green revolution! Learn practical steps to reduce your carbon footprint and help transition our university into a zero-waste campus.",
     "whatToExpect": [
@@ -87,11 +71,11 @@
     "venue": "Main Hall Foyer",
     "date": "22 April 2025",
     "time": "10:00am to 12:00pm",
-    "speakerInfo": "Elena Gomez is an environmental scientist and activist who has led sustainability projects for NGOs worldwide.",
+    "speakerInfo": "Elena Gomez, an Environmental Scientist holding a Bachelor of Environmental Science from Monash University Malaysia, who has led sustainability projects for NGOs across Southeast Asia.",
     "fee": "Free"
   },
   {
-    "id": "evt_007",
+    "id": "evt_006",
     "title": "AI in Healthcare: Saving Lives with Data",
     "description": "Discover how Artificial Intelligence is revolutionizing diagnostics, treatment plans, and patient care. Ideal for med-school and CS students alike.",
     "whatToExpect": [
@@ -102,11 +86,11 @@
     "venue": "Medical Faculty Auditorium",
     "date": "10 May 2025",
     "time": "1:00pm to 3:00pm",
-    "speakerInfo": "Dr. K. Arumugam is a surgeon and AI researcher focusing on machine learning applications in oncology.",
+    "speakerInfo": "Dr. K. Arumugam, a surgeon and AI researcher holding a Bachelor of Medicine, Bachelor of Surgery (MBBS) from Universiti Malaya, currently focusing on machine learning applications in oncology.",
     "fee": "Free"
   },
   {
-    "id": "evt_008",
+    "id": "evt_007",
     "title": "Photography Walk: Capturing Campus Life",
     "description": "Grab your camera or phone and join us for a guided photography walk. Learn about composition, lighting, and storytelling through lenses.",
     "whatToExpect": [
@@ -117,11 +101,11 @@
     "venue": "Meet at Main Fountain",
     "date": "20 May 2025",
     "time": "5:30pm to 7:30pm",
-    "speakerInfo": "Rizal Hisham is a freelance photojournalist whose work has been featured in National Geographic Asia.",
+    "speakerInfo": "Rizal Hisham, a freelance photojournalist holding a Bachelor of Photography & Creative Imaging from UiTM, whose work has been featured in National Geographic Asia.",
     "fee": "RM 5"
   },
   {
-    "id": "evt_009",
+    "id": "evt_008",
     "title": "Career Fair 2025: Connect & Hire",
     "description": "The biggest networking event of the year. Meet recruiters from top Fortune 500 companies and local unicorns looking for fresh graduates.",
     "whatToExpect": [
@@ -132,11 +116,11 @@
     "venue": "Grand Hall",
     "date": "10 June 2025",
     "time": "9:00am to 4:00pm",
-    "speakerInfo": "Various HR Directors from Top Companies.",
+    "speakerInfo": "Puan Siti Aminah, the HR Director at a Multinational Corporation holding a Bachelor of Human Resource Management from Universiti Utara Malaysia, accompanied by other industry leaders.",
     "fee": "Free"
   },
   {
-    "id": "evt_010",
+    "id": "evt_009",
     "title": "Mastering Public Speaking",
     "description": "Conquer your fear of the stage. This workshop focuses on body language, vocal projection, and structuring compelling speeches.",
     "whatToExpect": [
@@ -147,11 +131,11 @@
     "venue": "Lecture Hall C",
     "date": "15 June 2025",
     "time": "2:00pm to 4:00pm",
-    "speakerInfo": "Nancy Lee is a certified Toastmaster and communication coach who helps executives refine their presentation skills.",
+    "speakerInfo": "Nancy Lee, a certified communication coach holding a Bachelor of Mass Communication from Taylor's University, who helps corporate executives refine their presentation skills.",
     "fee": "RM 10"
   },
   {
-    "id": "evt_011",
+    "id": "evt_010",
     "title": "Cybersecurity: Hacking 101 (Ethical)",
     "description": "Understand the mindset of a hacker to better defend systems. This controlled environment workshop covers basic penetration testing and defense.",
     "whatToExpect": [
@@ -162,11 +146,11 @@
     "venue": "Cyber Lab",
     "date": "10 October 2025",
     "time": "10:00am to 1:00pm",
-    "speakerInfo": "Jason 'ZeroCool' Teoh is a certified ethical hacker and security consultant for banking institutions.",
+    "speakerInfo": "Jason Teoh, a certified ethical hacker holding a Bachelor of Information Technology (Information Security) from Tunku Abdul Rahman University of Management and Technology, currently consulting for banking institutions.",
     "fee": "RM 20"
   },
   {
-    "id": "evt_012",
+    "id": "evt_011",
     "title": "Digital Marketing for Beginners",
     "description": "Learn how to build a brand online. We cover SEO, social media marketing, and content creation strategies that actually convert.",
     "whatToExpect": [
@@ -177,11 +161,11 @@
     "venue": "Seminar Room 4",
     "date": "10 October 2025",
     "time": "11:00am to 1:00pm",
-    "speakerInfo": "Fatima Zahra is a digital marketing lead who helped scale three e-commerce brands to 7-figure revenues.",
+    "speakerInfo": "Fatima Zahra, a Digital Marketing Lead holding a Bachelor of Marketing from Universiti Putra Malaysia, who helped scale three local e-commerce brands to 7-figure revenues.",
     "fee": "RM 10"
   },
   {
-    "id": "evt_013",
+    "id": "evt_012",
     "title": "Robotics Showcase: The Next Gen",
     "description": "Witness the latest innovations from the engineering faculty. From autonomous drones to bipedal robots, see what the future holds.",
     "whatToExpect": [
@@ -192,11 +176,11 @@
     "venue": "Engineering Atrium",
     "date": "10 October 2025",
     "time": "12:00pm to 2:00pm",
-    "speakerInfo": "Prof. Dr. H. Yamamoto is a leading researcher in robotics and automation systems.",
+    "speakerInfo": "Prof. Dr. Siva Kumar, a leading researcher in robotics holding a PhD in Mechatronics Engineering from Universiti Teknologi Malaysia, specializing in automation systems.",
     "fee": "Free"
   },
   {
-    "id": "evt_014",
+    "id": "evt_013",
     "title": "Varsity E-Sports Championship Finals",
     "description": "Cheer for your faculty team as they battle it out in Dota 2 and Valorant. Big screens, loud cheers, and intense gameplay.",
     "whatToExpect": [
@@ -207,11 +191,11 @@
     "venue": "Sports Complex Auditorium",
     "date": "18 October 2025",
     "time": "10:00am to 6:00pm",
-    "speakerInfo": "Hosted by 'Shoutcaster' Mike.",
+    "speakerInfo": "Michael Wong, professionally known as 'Shoutcaster Mike', holding a Bachelor of Broadcasting from IACT College, who regularly commentates for regional E-sports tournaments.",
     "fee": "RM 5"
   },
   {
-    "id": "evt_015",
+    "id": "evt_014",
     "title": "Introduction to 3D Printing",
     "description": "Turn digital models into physical objects. Learn the basics of slicing software and printer maintenance.",
     "whatToExpect": [
@@ -222,8 +206,24 @@
     "venue": "Maker Space",
     "date": "05 November 2025",
     "time": "3:00pm to 5:00pm",
-    "speakerInfo": "Kenji Ito is a product design student and lab assistant at the university Maker Space.",
+    "speakerInfo": "Kenji Tan, a final year student holding a Diploma in Product Design from The One Academy, currently working as the lead lab assistant at the university Maker Space.",
     "fee": "RM 15"
+  },
+  {
+    "id": "evt_015",
+    "title": "Designing for Delight: Mastering UI/UX in the Digital Age",
+    "description": "In today's fast-paced digital world, creating visually appealing designs is no longer enough - users expect intuitive, seamless, and delightful experiences. This event explores how thoughtful user interface (UI) and user experience (UX) design can elevate products.",
+    "whatToExpect": [
+      "Keynote talks by experienced UI/UX professionals",
+      "Hands-on design challenges and live critiques",
+      "Tips on designing for accessibility, responsiveness, and engagement",
+      "Networking opportunities with fellow designers"
+    ],
+    "venue": "Innovation Hub, Level 2",
+    "date": "21 November 2025",
+    "time": "2:00pm to 4:00pm",
+    "speakerInfo": "Ava Lim, a Lead Product Designer holding a Bachelor of Creative Multimedia from Limkokwing University, with over 10 years of experience crafting intuitive digital experiences for global tech start-ups.",
+    "fee": "RM 10"
   },
   {
     "id": "evt_016",
@@ -237,11 +237,26 @@
     "venue": "Library Discussion Room A",
     "date": "21 November 2025",
     "time": "3:00pm to 5:00pm",
-    "speakerInfo": "Lina Ramli is a published novelist and columnist for a leading daily newspaper.",
+    "speakerInfo": "Lina Ramli, a published novelist holding a Bachelor of English Literature from Universiti Malaya, who also writes as a columnist for a leading daily newspaper.",
     "fee": "Free"
   },
   {
     "id": "evt_017",
+    "title": "DIY PC Building Workshop",
+    "description": "Learn how to select parts and assemble your own custom gaming or workstation PC safely.",
+    "whatToExpect": [
+      "Selecting compatible components",
+      "Applying thermal paste",
+      "Cable management tips"
+    ],
+    "venue": "Hardware Lab",
+    "date": "04 December 2025",
+    "time": "1:00pm to 4:00pm",
+    "speakerInfo": "Ahmad Faiz, a Tech Club Committee Member holding a Bachelor of Computer Engineering from Universiti Teknologi Malaysia, with a passion for custom hardware modification.",
+    "fee": "Free"
+  },
+  {
+    "id": "evt_018",
     "title": "Investment 101: Stocks & Bonds",
     "description": "Stop saving, start investing. Learn the fundamentals of the stock market, risk management, and how to read financial statements.",
     "whatToExpect": [
@@ -252,11 +267,11 @@
     "venue": "Lecture Hall B",
     "date": "05 December 2025",
     "time": "10:00am to 12:00pm",
-    "speakerInfo": "Mr. Chan, a certified financial analyst (CFA) with 20 years of market experience.",
+    "speakerInfo": "Mr. Chan Wei Ming, a Chartered Financial Analyst (CFA) holding a Bachelor of Finance from Nottingham University Malaysia, with over 20 years of stock market experience.",
     "fee": "RM 10"
   },
   {
-    "id": "evt_018",
+    "id": "evt_019",
     "title": "Yoga for Beginners",
     "description": "A rejuvenating session to stretch your body and calm your mind. Suitable for all fitness levels.",
     "whatToExpect": [
@@ -267,461 +282,11 @@
     "venue": "Gymnasium Studio 2",
     "date": "12 December 2025",
     "time": "8:00am to 9:30am",
-    "speakerInfo": "Priya Singh is a certified Yoga alliance instructor.",
+    "speakerInfo": "Priya Singh, a certified Yoga Alliance Instructor holding a Bachelor of Sports Science from Universiti Malaya, dedicated to promoting holistic wellness.",
     "fee": "RM 5"
-  },
-  {
-    "id": "evt_019",
-    "title": "Data Science: The Sexiest Job of the 21st Century",
-    "description": "What exactly do data scientists do? We deconstruct the hype and look at real-world applications of Big Data.",
-    "whatToExpect": [
-      "Intro to Pandas and Scikit-Learn",
-      "Visualizing data with Tableau",
-      "Career roadmap discussion"
-    ],
-    "venue": "Computer Lab 1",
-    "date": "15 January 2026",
-    "time": "2:00pm to 4:00pm",
-    "speakerInfo": "Dr. Farhan is a lecturer in Data Science and consultant for retail analytics.",
-    "fee": "Free"
   },
   {
     "id": "evt_020",
-    "title": "Film Screening: 'The Last Borneo'",
-    "description": "A documentary screening followed by a discussion on conservation efforts in East Malaysia.",
-    "whatToExpect": [
-      "90-minute film screening",
-      "Q&A with the film director",
-      "Refreshments provided"
-    ],
-    "venue": "Mini Theatre",
-    "date": "20 January 2026",
-    "time": "7:00pm to 9:30pm",
-    "speakerInfo": "Director Mark Lee, an independent filmmaker focusing on environmental issues.",
-    "fee": "RM 5"
-  },
-  {
-    "id": "evt_021",
-    "title": "Valentine's Baking Workshop",
-    "description": "Learn to bake cupcakes and cookies for your loved ones (or yourself!). All ingredients provided.",
-    "whatToExpect": [
-      "Baking techniques",
-      "Decorating with icing",
-      "Box packaging skills"
-    ],
-    "venue": "Culinary Arts Kitchen",
-    "date": "14 February 2026",
-    "time": "10:00am to 1:00pm",
-    "speakerInfo": "Chef Rose is a pastry instructor known for her intricate cake designs.",
-    "fee": "RM 20"
-  },
-  {
-    "id": "evt_022",
-    "title": "Love & Relationships Panel",
-    "description": "An open forum discussing modern relationships, communication standards, and red flags.",
-    "whatToExpect": [
-      "Panel discussion with counselors",
-      "Anonymous Q&A box",
-      "Relationship health checklist"
-    ],
-    "venue": "Student Hub",
-    "date": "14 February 2026",
-    "time": "11:00am to 1:00pm",
-    "speakerInfo": "Moderated by the University Counseling Unit.",
-    "fee": "Free"
-  },
-  {
-    "id": "evt_023",
-    "title": "Single & Mingling Mixer",
-    "description": "A fun, low-pressure social event for students to meet new friends from different faculties.",
-    "whatToExpect": [
-      "Ice-breaking games",
-      "Group challenges",
-      "Pizza party"
-    ],
-    "venue": "Cafeteria Outdoor Zone",
-    "date": "14 February 2026",
-    "time": "12:00pm to 2:00pm",
-    "speakerInfo": "Hosted by the Student Council Social Committee.",
-    "fee": "RM 10"
-  },
-  {
-    "id": "evt_024",
-    "title": "Augmented Reality (AR) Workshop",
-    "description": "Create your first AR filter for Instagram and TikTok using Spark AR Studio.",
-    "whatToExpect": [
-      "Introduction to Spark AR",
-      "Creating 3D assets",
-      "Publishing your filter"
-    ],
-    "venue": "Multimedia Lab",
-    "date": "01 March 2026",
-    "time": "2:00pm to 5:00pm",
-    "speakerInfo": "Jenny Ko is a freelance AR creator with over 50 million impressions on her filters.",
-    "fee": "RM 10"
-  },
-  {
-    "id": "evt_025",
-    "title": "Resume Rescue Clinic",
-    "description": "Is your resume getting rejected? Bring a printed copy and get 1-on-1 feedback to make it ATS-friendly and impactful.",
-    "whatToExpect": [
-      "Individual resume review",
-      "Formatting tips",
-      "Action verb cheat sheet"
-    ],
-    "venue": "Career Centre",
-    "date": "10 March 2026",
-    "time": "10:00am to 4:00pm",
-    "speakerInfo": "Career Counselors from the University Placement Office.",
-    "fee": "Free"
-  },
-  {
-    "id": "evt_026",
-    "title": "Debate Club Showcase",
-    "description": "Watch the university's best debaters tackle the motion: 'This House Believes AI will do more harm than good'.",
-    "whatToExpect": [
-      "British Parliamentary style debate",
-      "Audience voting",
-      "Debate strategy breakdown"
-    ],
-    "venue": "Moot Court",
-    "date": "15 March 2026",
-    "time": "8:00pm to 10:00pm",
-    "speakerInfo": "Featuring the National Varsities Debate Champions.",
-    "fee": "Free"
-  },
-  {
-    "id": "evt_027",
-    "title": "Effective Leadership Seminar",
-    "description": "Leadership isn't just about giving orders. Learn empathy, delegation, and strategic vision.",
-    "whatToExpect": [
-      "Leadership style assessment",
-      "Conflict resolution roleplay",
-      "Guest speech by a CEO"
-    ],
-    "venue": "Lecture Hall A",
-    "date": "20 March 2026",
-    "time": "9:00am to 11:00am",
-    "speakerInfo": "Datuk Azman, CEO of Synergy Corp and alumni of the university.",
-    "fee": "Free"
-  },
-  {
-    "id": "evt_028",
-    "title": "Introduction to Astronomy",
-    "description": "Explore the cosmos. We will be setting up telescopes to view Saturn's rings and the Moon's craters.",
-    "whatToExpect": [
-      "Stargazing session",
-      "Talk on black holes",
-      "Using star map apps"
-    ],
-    "venue": "Rooftop Garden",
-    "date": "25 March 2026",
-    "time": "8:00pm to 10:00pm",
-    "speakerInfo": "Astronomy Club President and Physics Dept Lecturers.",
-    "fee": "Free"
-  },
-  {
-    "id": "evt_029",
-    "title": "Music Production: Making Beats",
-    "description": "Learn the basics of FL Studio and Logic Pro. How to mix, master, and produce a track from your bedroom.",
-    "whatToExpect": [
-      "Beat making demo",
-      "Sampling techniques",
-      "Q&A on the music industry"
-    ],
-    "venue": "Music Studio B",
-    "date": "05 April 2026",
-    "time": "10:00am to 1:00pm",
-    "speakerInfo": "DJ Zack represents the new wave of local electronic music producers.",
-    "fee": "RM 15"
-  },
-  {
-    "id": "evt_030",
-    "title": "Foreign Language Taster: Japanese",
-    "description": "Konnichiwa! A fun introduction to the Japanese language and culture. Learn basic greetings and writing hiragana.",
-    "whatToExpect": [
-      "Writing your name in Japanese",
-      "Basic conversation phrases",
-      "Cultural etiquette"
-    ],
-    "venue": "Language Centre Room 3",
-    "date": "10 April 2026",
-    "time": "2:00pm to 4:00pm",
-    "speakerInfo": "Sensei Yumi, a native Japanese instructor with 15 years teaching experience.",
-    "fee": "RM 5"
-  },
-  {
-    "id": "evt_031",
-    "title": "Foreign Language Taster: French",
-    "description": "Bonjour! Dip your toes into the language of love. We cover pronunciation and basic travel phrases.",
-    "whatToExpect": [
-      "French pronunciation guide",
-      "Ordering food in French",
-      "Croissant tasting"
-    ],
-    "venue": "Language Centre Room 4",
-    "date": "10 April 2026",
-    "time": "2:00pm to 4:00pm",
-    "speakerInfo": "Madam Sophie, a fluent French speaker and linguistics expert.",
-    "fee": "RM 5"
-  },
-  {
-    "id": "evt_032",
-    "title": "Volunteer Briefing: Animal Shelter",
-    "description": "We are organizing a visit to the local animal shelter. Attend this briefing to learn safety protocols and how you can help.",
-    "whatToExpect": [
-      "Safety briefing",
-      "Schedule of activities",
-      "Fundraising goals"
-    ],
-    "venue": "Student Affairs Office",
-    "date": "15 April 2026",
-    "time": "5:00pm to 6:00pm",
-    "speakerInfo": "Community Service Society Committee.",
-    "fee": "Free"
-  },
-  {
-    "id": "evt_033",
-    "title": "Chess Tournament",
-    "description": "A rapid chess tournament for all skill levels. Prizes for the top 3 players.",
-    "whatToExpect": [
-      "Swiss system tournament",
-      "10+5 time control",
-      "Trophy presentation"
-    ],
-    "venue": "Multipurpose Hall",
-    "date": "20 April 2026",
-    "time": "9:00am to 5:00pm",
-    "speakerInfo": "Organized by the University Chess Club.",
-    "fee": "RM 10"
-  },
-  {
-    "id": "evt_034",
-    "title": "Excel for Internships",
-    "description": "Don't go into your internship unprepared. Master VLOOKUP, Pivot Tables, and Macros to impress your boss.",
-    "whatToExpect": [
-      "Data cleaning techniques",
-      "Dashboard creation",
-      "Shortcuts for efficiency"
-    ],
-    "venue": "Computer Lab 2",
-    "date": "25 April 2026",
-    "time": "10:00am to 12:00pm",
-    "speakerInfo": "Mr. Lim is a corporate trainer specializing in productivity software.",
-    "fee": "RM 10"
-  },
-  {
-    "id": "evt_035",
-    "title": "DIY PC Building Workshop",
-    "description": "Learn how to select parts and assemble your own custom gaming or workstation PC safely.",
-    "whatToExpect": [
-      "Selecting compatible components",
-      "Applying thermal paste",
-      "Cable management tips"
-    ],
-    "venue": "Hardware Lab",
-    "date": "01 May 2026",
-    "time": "1:00pm to 4:00pm",
-    "speakerInfo": "Tech Club Committee Members.",
-    "fee": "Free"
-  },
-  {
-    "id": "evt_036",
-    "title": "Calligraphy & Hand Lettering",
-    "description": "The art of beautiful writing. A relaxing workshop teaching brush pen calligraphy.",
-    "whatToExpect": [
-      "Basic strokes practice",
-      "Connecting letters",
-      "Creating a quote card"
-    ],
-    "venue": "Art Studio 1",
-    "date": "05 May 2026",
-    "time": "2:00pm to 4:00pm",
-    "speakerInfo": "Anna Arts, a freelance illustrator and calligrapher.",
-    "fee": "RM 20"
-  },
-  {
-    "id": "evt_037",
-    "title": "Understanding Tax in Malaysia",
-    "description": "Adulting is hard. We explain LHDN, e-Filing, and tax reliefs so you don't get in trouble with the government later.",
-    "whatToExpect": [
-      "How to register a tax file",
-      "List of claimable reliefs",
-      "Mock e-Filing walk-through"
-    ],
-    "venue": "Lecture Hall D",
-    "date": "08 May 2026",
-    "time": "10:00am to 12:00pm",
-    "speakerInfo": "Representative from the Inland Revenue Board (LHDN).",
-    "fee": "Free"
-  },
-  {
-    "id": "evt_038",
-    "title": "Intro to Game Development with Unity",
-    "description": "Ever wanted to build your own video game? Start here with the Unity engine.",
-    "whatToExpect": [
-      "Unity interface basics",
-      "Physics and collisions",
-      "Scripting player movement"
-    ],
-    "venue": "Game Design Lab",
-    "date": "10 May 2026",
-    "time": "9:00am to 1:00pm",
-    "speakerInfo": "Alex Tan, Indie Game Developer with titles on Steam.",
-    "fee": "RM 15"
-  },
-  {
-    "id": "evt_039",
-    "title": "Mobile App Dev: Flutter vs React Native",
-    "description": "A technical showdown. Which framework should you learn in 2026? We compare performance and developer experience.",
-    "whatToExpect": [
-      "Live coding comparison",
-      "Job market analysis",
-      "Q&A session"
-    ],
-    "venue": "Lecture Hall E",
-    "date": "10 May 2026",
-    "time": "10:00am to 12:00pm",
-    "speakerInfo": "Senior Mobile Engineers from Grab and Shopee.",
-    "fee": "Free"
-  },
-  {
-    "id": "evt_040",
-    "title": "Badminton Friendly Match",
-    "description": "Join us for a casual badminton session. Rackets and shuttles provided.",
-    "whatToExpect": [
-      "Doubles and singles matches",
-      "Refreshments",
-      "Meet new friends"
-    ],
-    "venue": "Sports Hall Court 1-4",
-    "date": "12 May 2026",
-    "time": "5:00pm to 7:00pm",
-    "speakerInfo": "Badminton Club Committee.",
-    "fee": "RM 5"
-  },
-  {
-    "id": "evt_041",
-    "title": "Psychology of Color in Marketing",
-    "description": "Why is Facebook blue and McDonald's red? Learn how color influences consumer behavior.",
-    "whatToExpect": [
-      "Color theory basics",
-      "Brand case studies",
-      "Designing a logo"
-    ],
-    "venue": "Design Studio 3",
-    "date": "15 May 2026",
-    "time": "11:00am to 1:00pm",
-    "speakerInfo": "Dr. M. Harris, Lecturer in Consumer Psychology.",
-    "fee": "Free"
-  },
-  {
-    "id": "evt_042",
-    "title": "First Aid & CPR Certification",
-    "description": "Learn life-saving skills. This is a condensed workshop covering the essentials of emergency response.",
-    "whatToExpect": [
-      "CPR practice on dummies",
-      "Heimlich maneuver",
-      "Bandaging wounds"
-    ],
-    "venue": "Health Services Center",
-    "date": "18 May 2026",
-    "time": "9:00am to 1:00pm",
-    "speakerInfo": "Certified Trainers from St. John Ambulance.",
-    "fee": "RM 20"
-  },
-  {
-    "id": "evt_043",
-    "title": "Speed Networking for Introverts",
-    "description": "Networking doesn't have to be scary. Structured, short interactions to help you build connections without the awkwardness.",
-    "whatToExpect": [
-      "3-minute rotation rounds",
-      "Conversation starter cards",
-      "Post-event contact exchange"
-    ],
-    "venue": "Student Lounge",
-    "date": "20 May 2026",
-    "time": "4:00pm to 6:00pm",
-    "speakerInfo": "Facilitated by the Career Development Team.",
-    "fee": "Free"
-  },
-  {
-    "id": "evt_044",
-    "title": "IoT: Building Smart Home Devices",
-    "description": "Introduction to Internet of Things using Arduino and Raspberry Pi.",
-    "whatToExpect": [
-      "Blinking an LED over WiFi",
-      "Reading temperature sensors",
-      "Controlling appliances remotely"
-    ],
-    "venue": "Electronics Lab",
-    "date": "22 May 2026",
-    "time": "2:00pm to 5:00pm",
-    "speakerInfo": "Tech Club Engineering Lead.",
-    "fee": "RM 15"
-  },
-  {
-    "id": "evt_045",
-    "title": "Futsal Tournament Qualifiers",
-    "description": "The road to the championship starts here. 5-a-side matches.",
-    "whatToExpect": [
-      "Group stage matches",
-      "Scouting for university team",
-      "Hydration stations"
-    ],
-    "venue": "Outdoor Courts",
-    "date": "23 May 2026",
-    "time": "8:00am to 12:00pm",
-    "speakerInfo": "Sports Department Officers.",
-    "fee": "RM 10"
-  },
-  {
-    "id": "evt_046",
-    "title": "Contemporary Dance Workshop",
-    "description": "Express yourself through movement. No prior dance experience required.",
-    "whatToExpect": [
-      "Warm-up exercises",
-      "Choreography learning",
-      "Group performance"
-    ],
-    "venue": "Dance Studio A",
-    "date": "23 May 2026",
-    "time": "10:00am to 12:00pm",
-    "speakerInfo": "Sarah J., lead choreographer of the University Dance Crew.",
-    "fee": "RM 5"
-  },
-  {
-    "id": "evt_047",
-    "title": "Thesis Writing Bootcamp",
-    "description": "For final year students. We shut the doors and write. Mentors available for consultation.",
-    "whatToExpect": [
-      "Structured writing sprints",
-      "Citation management help",
-      "Free snacks and coffee"
-    ],
-    "venue": "Library Quiet Zone",
-    "date": "25 May 2026",
-    "time": "9:00am to 5:00pm",
-    "speakerInfo": "Academic Writing Support Staff.",
-    "fee": "Free"
-  },
-  {
-    "id": "evt_048",
-    "title": "Intro to Cloud Computing (AWS)",
-    "description": "Why move to the cloud? Learn the basics of Amazon Web Services.",
-    "whatToExpect": [
-      "S3 and EC2 basics",
-      "Setting up a virtual server",
-      "Cloud security fundamentals"
-    ],
-    "venue": "Computer Lab 3",
-    "date": "28 May 2026",
-    "time": "2:00pm to 4:00pm",
-    "speakerInfo": "Certified AWS Cloud Practitioner.",
-    "fee": "RM 10"
-  },
-  {
-    "id": "evt_049",
     "title": "Table Tennis Championship",
     "description": "Fast-paced ping pong action. Who will be the university champion?",
     "whatToExpect": [
@@ -732,11 +297,11 @@
     "venue": "Student Center Game Room",
     "date": "28 December 2025",
     "time": "10:00am to 2:00pm",
-    "speakerInfo": "Table Tennis Club.",
+    "speakerInfo": "Jason Ng, the Table Tennis Club Secretary holding a Bachelor of Economics from Universiti Malaya, who organizes annual inter-faculty sports competitions.",
     "fee": "RM 5"
   },
   {
-    "id": "evt_050",
+    "id": "evt_021",
     "title": "End of Semester Music Night",
     "description": "Celebrate the end of exams with live performances by student bands and acoustic acts.",
     "whatToExpect": [
@@ -747,11 +312,11 @@
     "venue": "University Plaza",
     "date": "28 December 2025",
     "time": "7:00pm to 11:00pm",
-    "speakerInfo": "Various Student Artists.",
+    "speakerInfo": "The Campus Vibes, a student band comprising final year students holding a Bachelor of Music from UCSI University, known for their energetic pop-rock covers.",
     "fee": "Free"
   },
   {
-    "id": "evt_051",
+    "id": "evt_022",
     "title": "Introduction to Python for Data Science",
     "description": "A hands-on workshop designed for beginners to learn the basics of Python programming with a focus on data analysis libraries like Pandas and NumPy.",
     "whatToExpect": [
@@ -762,11 +327,11 @@
     "venue": "Computer Lab 3, Block B",
     "date": "28 December 2025",
     "time": "9:00am to 12:00pm",
-    "speakerInfo": "Dr. Aiman Razak, Senior Lecturer at the Faculty of Computing.",
+    "speakerInfo": "Dr. Aiman Razak, a Senior Lecturer holding a PhD in Computer Science from Universiti Kebangsaan Malaysia, specializing in data mining and artificial intelligence.",
     "fee": "Free"
   },
   {
-    "id": "evt_052",
+    "id": "evt_023",
     "title": "Public Speaking Mastery: Voice & Confidence",
     "description": "Unlock your potential as a speaker by learning techniques to project your voice, manage stage fright, and structure compelling speeches.",
     "whatToExpect": [
@@ -777,11 +342,11 @@
     "venue": "Lecture Hall 1 (DK1)",
     "date": "28 December 2025",
     "time": "2:00pm to 5:00pm",
-    "speakerInfo": "Ms. Sarah Lee, Toastmasters District Champion and Communication Coach.",
+    "speakerInfo": "Ms. Sarah Lee, a Toastmasters District Champion holding a Bachelor of Corporate Communication from Universiti Putra Malaysia, who coaches students on effective public speaking.",
     "fee": "RM15"
   },
   {
-    "id": "evt_053",
+    "id": "evt_024",
     "title": "Sustainable Engineering: Building for the Future",
     "description": "An insightful seminar exploring green building materials, renewable energy integration, and the future of eco-friendly infrastructure.",
     "whatToExpect": [
@@ -792,11 +357,11 @@
     "venue": "Engineering Auditorium",
     "date": "28 December 2025",
     "time": "10:00am to 1:00pm",
-    "speakerInfo": "Ir. Tan Wei Ming, Green Building Index (GBI) Facilitator.",
+    "speakerInfo": "Ir. Tan Wei Ming, a Green Building Index (GBI) Facilitator holding a Bachelor of Civil Engineering from Universiti Teknologi Malaysia, advocating for sustainable construction practices.",
     "fee": "Free"
   },
   {
-    "id": "evt_054",
+    "id": "evt_025",
     "title": "Financial Literacy 101 for Students",
     "description": "Learn how to manage your student budget, understanding loans, and basic investment strategies to secure your financial future early.",
     "whatToExpect": [
@@ -807,11 +372,11 @@
     "venue": "Seminar Room 4, Faculty of Business",
     "date": "28 December 2025",
     "time": "3:00pm to 6:00pm",
-    "speakerInfo": "Mr. Johan Ariff, Certified Financial Planner (CFP).",
+    "speakerInfo": "Mr. Johan Ariff, a Certified Financial Planner (CFP) holding a Bachelor of Finance from Universiti Utara Malaysia, passionate about improving financial literacy among youths.",
     "fee": "RM10"
   },
   {
-    "id": "evt_055",
+    "id": "evt_026",
     "title": "Adobe Illustrator Workshop: Logo Design",
     "description": "Dive into the world of vector graphics and learn how to create professional logos and branding materials using Adobe Illustrator.",
     "whatToExpect": [
@@ -822,7 +387,442 @@
     "venue": "Multimedia Studio, Faculty of Creative Arts",
     "date": "28 December 2025",
     "time": "1:00pm to 5:00pm",
-    "speakerInfo": "Emily Wong, Freelance Graphic Designer and Alumni.",
+    "speakerInfo": "Emily Wong, a freelance Graphic Designer holding a Bachelor of Graphic Design from Taylor's University, specializing in brand identity and vector illustration.",
     "fee": "RM25"
+  },
+  {
+    "id": "evt_027",
+    "title": "Data Science: The Sexiest Job of the 21st Century",
+    "description": "What exactly do data scientists do? We deconstruct the hype and look at real-world applications of Big Data.",
+    "whatToExpect": [
+      "Intro to Pandas and Scikit-Learn",
+      "Visualizing data with Tableau",
+      "Career roadmap discussion"
+    ],
+    "venue": "Computer Lab 1",
+    "date": "15 January 2026",
+    "time": "2:00pm to 4:00pm",
+    "speakerInfo": "Dr. Farhan Adnan, a Data Science Lecturer holding a PhD in Data Analytics from Universiti Teknologi PETRONAS, who consults for retail companies on customer behavior analysis.",
+    "fee": "Free"
+  },
+  {
+    "id": "evt_028",
+    "title": "Film Screening: 'The Last Borneo'",
+    "description": "A documentary screening followed by a discussion on conservation efforts in East Malaysia.",
+    "whatToExpect": [
+      "90-minute film screening",
+      "Q&A with the film director",
+      "Refreshments provided"
+    ],
+    "venue": "Mini Theatre",
+    "date": "20 January 2026",
+    "time": "7:00pm to 9:30pm",
+    "speakerInfo": "Mark Lee, an independent filmmaker holding a Bachelor of Cinematic Arts from Multimedia University (MMU), focusing on documentaries regarding environmental issues in Borneo.",
+    "fee": "RM 5"
+  },
+  {
+    "id": "evt_029",
+    "title": "Valentine's Baking Workshop",
+    "description": "Learn to bake cupcakes and cookies for your loved ones (or yourself!). All ingredients provided.",
+    "whatToExpect": [
+      "Baking techniques",
+      "Decorating with icing",
+      "Box packaging skills"
+    ],
+    "venue": "Culinary Arts Kitchen",
+    "date": "14 February 2026",
+    "time": "10:00am to 1:00pm",
+    "speakerInfo": "Chef Rosnah, a professional pastry instructor holding a Diploma in Culinary Arts from KDU University College, known for her intricate wedding cake designs.",
+    "fee": "RM 20"
+  },
+  {
+    "id": "evt_030",
+    "title": "Love & Relationships Panel",
+    "description": "An open forum discussing modern relationships, communication standards, and red flags.",
+    "whatToExpect": [
+      "Panel discussion with counselors",
+      "Anonymous Q&A box",
+      "Relationship health checklist"
+    ],
+    "venue": "Student Hub",
+    "date": "14 February 2026",
+    "time": "11:00am to 1:00pm",
+    "speakerInfo": "Mr. Davin Raj, a licensed counselor holding a Master of Counseling from Universiti Sains Malaysia, currently serving at the University Counseling Unit.",
+    "fee": "Free"
+  },
+  {
+    "id": "evt_031",
+    "title": "Single & Mingling Mixer",
+    "description": "A fun, low-pressure social event for students to meet new friends from different faculties.",
+    "whatToExpect": [
+      "Ice-breaking games",
+      "Group challenges",
+      "Pizza party"
+    ],
+    "venue": "Cafeteria Outdoor Zone",
+    "date": "14 February 2026",
+    "time": "12:00pm to 2:00pm",
+    "speakerInfo": "Alicia Teoh, the Student Council Social Director holding a Bachelor of Event Management from Sunway University, organizing events to foster campus community spirit.",
+    "fee": "RM 10"
+  },
+  {
+    "id": "evt_032",
+    "title": "Augmented Reality (AR) Workshop",
+    "description": "Create your first AR filter for Instagram and TikTok using Spark AR Studio.",
+    "whatToExpect": [
+      "Introduction to Spark AR",
+      "Creating 3D assets",
+      "Publishing your filter"
+    ],
+    "venue": "Multimedia Lab",
+    "date": "01 March 2026",
+    "time": "2:00pm to 5:00pm",
+    "speakerInfo": "Jenny Ko, a freelance AR creator holding a Bachelor of Multimedia Design from The One Academy, with over 50 million impressions on her Instagram filters.",
+    "fee": "RM 10"
+  },
+  {
+    "id": "evt_033",
+    "title": "Resume Rescue Clinic",
+    "description": "Is your resume getting rejected? Bring a printed copy and get 1-on-1 feedback to make it ATS-friendly and impactful.",
+    "whatToExpect": [
+      "Individual resume review",
+      "Formatting tips",
+      "Action verb cheat sheet"
+    ],
+    "venue": "Career Centre",
+    "date": "10 March 2026",
+    "time": "10:00am to 4:00pm",
+    "speakerInfo": "Ms. Geetha, a Career Counselor holding a Bachelor of Psychology from HELP University, specializing in graduate employability and interview coaching.",
+    "fee": "Free"
+  },
+  {
+    "id": "evt_034",
+    "title": "Debate Club Showcase",
+    "description": "Watch the university's best debaters tackle the motion: 'This House Believes AI will do more harm than good'.",
+    "whatToExpect": [
+      "British Parliamentary style debate",
+      "Audience voting",
+      "Debate strategy breakdown"
+    ],
+    "venue": "Moot Court",
+    "date": "15 March 2026",
+    "time": "8:00pm to 10:00pm",
+    "speakerInfo": "Syed Azmi, the Varsity Debate Captain holding a Bachelor of Laws (LLB) from Universiti Malaya, who was a finalist in the National Varsities Debate Championship.",
+    "fee": "Free"
+  },
+  {
+    "id": "evt_035",
+    "title": "Effective Leadership Seminar",
+    "description": "Leadership isn't just about giving orders. Learn empathy, delegation, and strategic vision.",
+    "whatToExpect": [
+      "Leadership style assessment",
+      "Conflict resolution roleplay",
+      "Guest speech by a CEO"
+    ],
+    "venue": "Lecture Hall A",
+    "date": "20 March 2026",
+    "time": "9:00am to 11:00am",
+    "speakerInfo": "Datuk Azman, the CEO of Synergy Corp holding a Master of Business Administration (MBA) from Universiti Kebangsaan Malaysia, returning to his alma mater to mentor future leaders.",
+    "fee": "Free"
+  },
+  {
+    "id": "evt_036",
+    "title": "Introduction to Astronomy",
+    "description": "Explore the cosmos. We will be setting up telescopes to view Saturn's rings and the Moon's craters.",
+    "whatToExpect": [
+      "Stargazing session",
+      "Talk on black holes",
+      "Using star map apps"
+    ],
+    "venue": "Rooftop Garden",
+    "date": "25 March 2026",
+    "time": "8:00pm to 10:00pm",
+    "speakerInfo": "Prof. Dr. Tan, an Astrophysics Lecturer holding a PhD in Physics from Universiti Sains Malaysia, who also serves as the advisor for the University Astronomy Club.",
+    "fee": "Free"
+  },
+  {
+    "id": "evt_037",
+    "title": "Music Production: Making Beats",
+    "description": "Learn the basics of FL Studio and Logic Pro. How to mix, master, and produce a track from your bedroom.",
+    "whatToExpect": [
+      "Beat making demo",
+      "Sampling techniques",
+      "Q&A on the music industry"
+    ],
+    "venue": "Music Studio B",
+    "date": "05 April 2026",
+    "time": "10:00am to 1:00pm",
+    "speakerInfo": "Zack Ariffin, professional DJ holding a Bachelor of Audio Engineering from SAE Institute, representing the new wave of local electronic music producers.",
+    "fee": "RM 15"
+  },
+  {
+    "id": "evt_038",
+    "title": "Foreign Language Taster: Japanese",
+    "description": "Konnichiwa! A fun introduction to the Japanese language and culture. Learn basic greetings and writing hiragana.",
+    "whatToExpect": [
+      "Writing your name in Japanese",
+      "Basic conversation phrases",
+      "Cultural etiquette"
+    ],
+    "venue": "Language Centre Room 3",
+    "date": "10 April 2026",
+    "time": "2:00pm to 4:00pm",
+    "speakerInfo": "Sensei Yumi Tan, a Japanese language instructor holding a Bachelor of Linguistics from University of Tsukuba, with 15 years of experience teaching Japanese in Malaysia.",
+    "fee": "RM 5"
+  },
+  {
+    "id": "evt_039",
+    "title": "Foreign Language Taster: French",
+    "description": "Bonjour! Dip your toes into the language of love. We cover pronunciation and basic travel phrases.",
+    "whatToExpect": [
+      "French pronunciation guide",
+      "Ordering food in French",
+      "Croissant tasting"
+    ],
+    "venue": "Language Centre Room 4",
+    "date": "10 April 2026",
+    "time": "2:00pm to 4:00pm",
+    "speakerInfo": "Madam Sophie Lim, a fluent French speaker holding a Bachelor of French Language Studies from Universiti Putra Malaysia, specializing in conversational French for beginners.",
+    "fee": "RM 5"
+  },
+  {
+    "id": "evt_040",
+    "title": "Volunteer Briefing: Animal Shelter",
+    "description": "We are organizing a visit to the local animal shelter. Attend this briefing to learn safety protocols and how you can help.",
+    "whatToExpect": [
+      "Safety briefing",
+      "Schedule of activities",
+      "Fundraising goals"
+    ],
+    "venue": "Student Affairs Office",
+    "date": "15 April 2026",
+    "time": "5:00pm to 6:00pm",
+    "speakerInfo": "Raj Kumar, the Community Service Society President holding a Bachelor of Social Science from Universiti Sains Malaysia, dedicated to animal welfare and community outreach.",
+    "fee": "Free"
+  },
+  {
+    "id": "evt_041",
+    "title": "Chess Tournament",
+    "description": "A rapid chess tournament for all skill levels. Prizes for the top 3 players.",
+    "whatToExpect": [
+      "Swiss system tournament",
+      "10+5 time control",
+      "Trophy presentation"
+    ],
+    "venue": "Multipurpose Hall",
+    "date": "20 April 2026",
+    "time": "9:00am to 5:00pm",
+    "speakerInfo": "Steven Low, the University Chess Club President holding a Bachelor of Mathematics from Universiti Malaya, who is a national-level chess arbiter.",
+    "fee": "RM 10"
+  },
+  {
+    "id": "evt_042",
+    "title": "Excel for Internships",
+    "description": "Don't go into your internship unprepared. Master VLOOKUP, Pivot Tables, and Macros to impress your boss.",
+    "whatToExpect": [
+      "Data cleaning techniques",
+      "Dashboard creation",
+      "Shortcuts for efficiency"
+    ],
+    "venue": "Computer Lab 2",
+    "date": "25 April 2026",
+    "time": "10:00am to 12:00pm",
+    "speakerInfo": "Mr. Lim Kian Seng, a corporate trainer holding a Bachelor of Business Information Systems from TAR UMT, specializing in productivity software for corporate environments.",
+    "fee": "RM 10"
+  },
+  {
+    "id": "evt_043",
+    "title": "Calligraphy & Hand Lettering",
+    "description": "The art of beautiful writing. A relaxing workshop teaching brush pen calligraphy.",
+    "whatToExpect": [
+      "Basic strokes practice",
+      "Connecting letters",
+      "Creating a quote card"
+    ],
+    "venue": "Art Studio 1",
+    "date": "05 May 2026",
+    "time": "2:00pm to 4:00pm",
+    "speakerInfo": "Anna Liew, a freelance illustrator holding a Bachelor of Fine Arts from the Malaysian Institute of Art, specializing in modern brush lettering and watercolor.",
+    "fee": "RM 20"
+  },
+  {
+    "id": "evt_044",
+    "title": "Understanding Tax in Malaysia",
+    "description": "Adulting is hard. We explain LHDN, e-Filing, and tax reliefs so you don't get in trouble with the government later.",
+    "whatToExpect": [
+      "How to register a tax file",
+      "List of claimable reliefs",
+      "Mock e-Filing walk-through"
+    ],
+    "venue": "Lecture Hall D",
+    "date": "08 May 2026",
+    "time": "10:00am to 12:00pm",
+    "speakerInfo": "Puan Norazlina, a Senior Officer from the Inland Revenue Board (LHDN) holding a Bachelor of Accounting from UiTM, dedicated to educating students on tax compliance.",
+    "fee": "Free"
+  },
+  {
+    "id": "evt_045",
+    "title": "Intro to Game Development with Unity",
+    "description": "Ever wanted to build your own video game? Start here with the Unity engine.",
+    "whatToExpect": [
+      "Unity interface basics",
+      "Physics and collisions",
+      "Scripting player movement"
+    ],
+    "venue": "Game Design Lab",
+    "date": "10 May 2026",
+    "time": "9:00am to 1:00pm",
+    "speakerInfo": "Alex Tan, an Indie Game Developer holding a Bachelor of Game Development from KDU University College, with multiple titles published on the Steam platform.",
+    "fee": "RM 15"
+  },
+  {
+    "id": "evt_046",
+    "title": "Mobile App Dev: Flutter vs React Native",
+    "description": "A technical showdown. Which framework should you learn in 2026? We compare performance and developer experience.",
+    "whatToExpect": [
+      "Live coding comparison",
+      "Job market analysis",
+      "Q&A session"
+    ],
+    "venue": "Lecture Hall E",
+    "date": "10 May 2026",
+    "time": "10:00am to 12:00pm",
+    "speakerInfo": "Ravi Muthusamy, a Senior Mobile Engineer at Shopee holding a Bachelor of Software Engineering from Universiti Malaya, with expertise in cross-platform mobile architecture.",
+    "fee": "Free"
+  },
+  {
+    "id": "evt_047",
+    "title": "Badminton Friendly Match",
+    "description": "Join us for a casual badminton session. Rackets and shuttles provided.",
+    "whatToExpect": [
+      "Doubles and singles matches",
+      "Refreshments",
+      "Meet new friends"
+    ],
+    "venue": "Sports Hall Court 1-4",
+    "date": "12 May 2026",
+    "time": "5:00pm to 7:00pm",
+    "speakerInfo": "Lee Wei Ming, the Badminton Club Vice-President holding a Bachelor of Sports Management from Universiti Malaya, organizing community sports events for students.",
+    "fee": "RM 5"
+  },
+  {
+    "id": "evt_048",
+    "title": "Psychology of Color in Marketing",
+    "description": "Why is Facebook blue and McDonald's red? Learn how color influences consumer behavior.",
+    "whatToExpect": [
+      "Color theory basics",
+      "Brand case studies",
+      "Designing a logo"
+    ],
+    "venue": "Design Studio 3",
+    "date": "15 May 2026",
+    "time": "11:00am to 1:00pm",
+    "speakerInfo": "Dr. Melissa Harris, a Lecturer in Consumer Psychology holding a PhD in Marketing from Universiti Putra Malaysia, researching visual branding and consumer perception.",
+    "fee": "Free"
+  },
+  {
+    "id": "evt_049",
+    "title": "First Aid & CPR Certification",
+    "description": "Learn life-saving skills. This is a condensed workshop covering the essentials of emergency response.",
+    "whatToExpect": [
+      "CPR practice on dummies",
+      "Heimlich maneuver",
+      "Bandaging wounds"
+    ],
+    "venue": "Health Services Center",
+    "date": "18 May 2026",
+    "time": "9:00am to 1:00pm",
+    "speakerInfo": "John Pillai, a certified paramedic holding a Bachelor of Nursing from International Medical University (IMU), representing St. John Ambulance Malaysia.",
+    "fee": "RM 20"
+  },
+  {
+    "id": "evt_050",
+    "title": "Speed Networking for Introverts",
+    "description": "Networking doesn't have to be scary. Structured, short interactions to help you build connections without the awkwardness.",
+    "whatToExpect": [
+      "3-minute rotation rounds",
+      "Conversation starter cards",
+      "Post-event contact exchange"
+    ],
+    "venue": "Student Lounge",
+    "date": "20 May 2026",
+    "time": "4:00pm to 6:00pm",
+    "speakerInfo": "Sarah Abdullah, a Career Development Officer holding a Bachelor of Human Resource Development from Universiti Teknologi Malaysia, focused on helping students build soft skills.",
+    "fee": "Free"
+  },
+  {
+    "id": "evt_051",
+    "title": "IoT: Building Smart Home Devices",
+    "description": "Introduction to Internet of Things using Arduino and Raspberry Pi.",
+    "whatToExpect": [
+      "Blinking an LED over WiFi",
+      "Reading temperature sensors",
+      "Controlling appliances remotely"
+    ],
+    "venue": "Electronics Lab",
+    "date": "22 May 2026",
+    "time": "2:00pm to 5:00pm",
+    "speakerInfo": "Tan Yi Shen, the Tech Club Engineering Lead holding a Bachelor of Electrical & Electronic Engineering from Tenaga Nasional University (UNITEN), specializing in embedded systems.",
+    "fee": "RM 15"
+  },
+  {
+    "id": "evt_052",
+    "title": "Futsal Tournament Qualifiers",
+    "description": "The road to the championship starts here. 5-a-side matches.",
+    "whatToExpect": [
+      "Group stage matches",
+      "Scouting for university team",
+      "Hydration stations"
+    ],
+    "venue": "Outdoor Courts",
+    "date": "23 May 2026",
+    "time": "8:00am to 12:00pm",
+    "speakerInfo": "Coach Rahim, a University Sports Officer holding a Bachelor of Sports Science from UiTM, who manages the university's varsity football team.",
+    "fee": "RM 10"
+  },
+  {
+    "id": "evt_053",
+    "title": "Contemporary Dance Workshop",
+    "description": "Express yourself through movement. No prior dance experience required.",
+    "whatToExpect": [
+      "Warm-up exercises",
+      "Choreography learning",
+      "Group performance"
+    ],
+    "venue": "Dance Studio A",
+    "date": "23 May 2026",
+    "time": "10:00am to 12:00pm",
+    "speakerInfo": "Sarah Jenna, the Lead Choreographer of the University Dance Crew holding a Bachelor of Performing Arts (Dance) from Universiti Malaya, specializing in contemporary and modern dance.",
+    "fee": "RM 5"
+  },
+  {
+    "id": "evt_054",
+    "title": "Thesis Writing Bootcamp",
+    "description": "For final year students. We shut the doors and write. Mentors available for consultation.",
+    "whatToExpect": [
+      "Structured writing sprints",
+      "Citation management help",
+      "Free snacks and coffee"
+    ],
+    "venue": "Library Quiet Zone",
+    "date": "25 May 2026",
+    "time": "9:00am to 5:00pm",
+    "speakerInfo": "Dr. Wong, a Senior Lecturer holding a PhD in Education from Universiti Malaya, who coordinates the Academic Writing Support program for postgraduate students.",
+    "fee": "Free"
+  },
+  {
+    "id": "evt_055",
+    "title": "Intro to Cloud Computing (AWS)",
+    "description": "Why move to the cloud? Learn the basics of Amazon Web Services.",
+    "whatToExpect": [
+      "S3 and EC2 basics",
+      "Setting up a virtual server",
+      "Cloud security fundamentals"
+    ],
+    "venue": "Computer Lab 3",
+    "date": "28 May 2026",
+    "time": "2:00pm to 4:00pm",
+    "speakerInfo": "Kumar Velu, a Certified AWS Cloud Practitioner holding a Bachelor of Information Technology from Multimedia University (MMU), specializing in cloud infrastructure migration.",
+    "fee": "RM 10"
   }
 ]

@@ -28,7 +28,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
     _fetchEvents(); // Fetch data when screen loads
   }
 
-  // --- NEW: Fetch from Firestore ---
   Future<void> _fetchEvents() async {
     try {
       final snapshot = await FirebaseFirestore.instance
@@ -38,7 +37,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
       Map<DateTime, List<Event>> tempEvents = {};
 
       for (var doc in snapshot.docs) {
-        final event = Event.fromFirestore(doc.data());
+        // --- CRITICAL FIX HERE ---
+        // We now pass both the data AND the document ID (doc.id)
+        final event = Event.fromFirestore(doc.data(), doc.id);
 
         // We must normalize the date to UTC Midnight for the Calendar to recognize it
         final dateKey = DateTime.utc(
@@ -57,7 +58,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
         _events = tempEvents;
         _isLoading = false;
         // Update selected events in case the current day has events
-        _selectedEvents = _getEventsForDay(_selectedDay!);
+        if (_selectedDay != null) {
+           _selectedEvents = _getEventsForDay(_selectedDay!);
+        }
       });
     } catch (e) {
       print("Error loading events: $e");

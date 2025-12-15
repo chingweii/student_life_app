@@ -1,10 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Make sure this is imported at the top too
 
 class RegistrationBottomSheet extends StatefulWidget {
-  final String eventTitle; // Receive the event name/ID
+  final String eventId; // Defined here so the button can pass it
+  final String eventTitle; // Defined here so the button can pass it
 
-  const RegistrationBottomSheet({super.key, required this.eventTitle});
+  const RegistrationBottomSheet({
+    super.key,
+    required this.eventId,
+    required this.eventTitle,
+  });
 
   @override
   State<RegistrationBottomSheet> createState() =>
@@ -12,14 +17,12 @@ class RegistrationBottomSheet extends StatefulWidget {
 }
 
 class _RegistrationBottomSheetState extends State<RegistrationBottomSheet> {
-  // 1. Create Controllers to capture text
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
-  bool _isLoading = false; // To show a loading spinner
+  bool _isLoading = false;
 
-  // 2. The Function to Save to Firebase
   Future<void> _submitRegistration() async {
     final String name = _nameController.text.trim();
     final String id = _idController.text.trim();
@@ -35,23 +38,22 @@ class _RegistrationBottomSheetState extends State<RegistrationBottomSheet> {
     setState(() => _isLoading = true);
 
     try {
-      // --- FIREBASE LOGIC HERE ---
-      // Structure: events -> [Specific Event Name] -> registrations -> [Auto ID]
+      // Logic to save to: events -> [evt_050] -> registrations
       await FirebaseFirestore.instance
-          .collection('events') // Root collection
-          .doc(widget.eventTitle) // The specific event document
-          .collection('registrations') // Subcollection for this event
+          .collection('events')
+          .doc(widget.eventId)
+          .collection('registrations')
           .add({
             'fullName': name,
             'studentID': id,
             'email': email,
-            'registeredAt': FieldValue.serverTimestamp(), // Save time
+            'registeredAt': FieldValue.serverTimestamp(),
           });
 
       if (mounted) {
-        Navigator.pop(context); // Close sheet
+        Navigator.pop(context); // Close the sheet
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registration Successful!')),
+          SnackBar(content: Text('Registered for ${widget.eventTitle}!')),
         );
       }
     } catch (e) {
@@ -76,7 +78,7 @@ class _RegistrationBottomSheetState extends State<RegistrationBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return FractionallySizedBox(
-      heightFactor: 0.7, // Increased slightly to handle keyboard better
+      heightFactor: 0.5,
       child: Padding(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -90,19 +92,19 @@ class _RegistrationBottomSheetState extends State<RegistrationBottomSheet> {
               width: 80,
               height: 5,
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 0, 0, 0),
+                color: Colors.black,
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
             const SizedBox(height: 25),
             Text(
-              'Register for ${widget.eventTitle}', // Show event name
+              'Register for ${widget.eventTitle}',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 24),
-
-            // 3. Connect Controllers to TextFields
             TextField(
               controller: _nameController,
               decoration: InputDecoration(
@@ -134,8 +136,6 @@ class _RegistrationBottomSheetState extends State<RegistrationBottomSheet> {
               ),
             ),
             const Spacer(),
-
-            // Submit Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -149,14 +149,7 @@ class _RegistrationBottomSheetState extends State<RegistrationBottomSheet> {
                   ),
                 ),
                 child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
+                    ? const CircularProgressIndicator(color: Colors.white)
                     : const Text('Submit', style: TextStyle(fontSize: 18)),
               ),
             ),

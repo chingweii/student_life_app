@@ -13,7 +13,6 @@ class SearchScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        // 1. Changed to SingleChildScrollView to allow scrolling down to suggestions
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -35,11 +34,9 @@ class SearchScreen extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                // 2. GridView is no longer Expanded, uses shrinkWrap
                 GridView.count(
-                  shrinkWrap: true, // Takes only needed space
-                  physics:
-                      const NeverScrollableScrollPhysics(), // Disables internal scrolling
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   crossAxisCount: 2,
                   crossAxisSpacing: 6,
                   mainAxisSpacing: 6,
@@ -72,7 +69,6 @@ class SearchScreen extends StatelessWidget {
 
                 const SizedBox(height: 30),
 
-                // 3. New Peer Suggestion Section
                 const Text(
                   'Peer Suggestions',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -84,24 +80,22 @@ class SearchScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 15),
 
-                // 4. Firestore Logic for Random Suggestions
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('users')
-                      .limit(10) // Fetch a pool of users (e.g., 10 or 20)
+                      .limit(20)
                       .snapshots(),
                   builder: (context, snapshot) {
-                    if (!snapshot.hasData)
+                    if (!snapshot.hasData) {
                       return const Center(child: CircularProgressIndicator());
+                    }
 
                     final docs = snapshot.data!.docs;
 
                     if (docs.isEmpty) return const Text("No peers found.");
 
-                    // RANDOM LOGIC:
-                    // We take the list of docs, shuffle it, and take the first 3
                     List<QueryDocumentSnapshot> shuffledDocs = List.from(docs);
-                    shuffledDocs.shuffle(Random()); // Randomize order
+                    shuffledDocs.shuffle(Random());
                     List<QueryDocumentSnapshot> randomSelection = shuffledDocs
                         .take(10)
                         .toList();
@@ -123,6 +117,22 @@ class SearchScreen extends StatelessWidget {
   }
 
   // --- Helper Widgets ---
+
+  // 1. NEW HELPER FUNCTION TO HANDLE IMAGE LOGIC
+  ImageProvider _getProfileImage(String? imageUrl) {
+    // A. If empty or null, use default local asset
+    if (imageUrl == null || imageUrl.isEmpty) {
+      return const AssetImage('assets/images/user_avatar.png');
+    }
+
+    // B. If it starts with 'http', it's a Real User (Firebase Storage)
+    if (imageUrl.startsWith('http')) {
+      return NetworkImage(imageUrl);
+    }
+
+    // C. Otherwise, it's a Mock User (Local Asset path)
+    return AssetImage(imageUrl);
+  }
 
   void _navigateToSearch(BuildContext context, String query) {
     Navigator.push(
@@ -200,7 +210,6 @@ class SearchScreen extends StatelessWidget {
     );
   }
 
-  // 5. New Widget for Peer Cards
   Widget _buildPeerSuggestionCard(BuildContext context, Person person) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -221,19 +230,17 @@ class SearchScreen extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 24,
-            backgroundImage: NetworkImage(person.imageUrl),
-            onBackgroundImageError: (_, __) {},
             backgroundColor: Colors.grey[200],
+            // 2. USE THE NEW HELPER FUNCTION HERE
+            backgroundImage: _getProfileImage(person.imageUrl),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // --- MODIFIED SECTION START ---
                 Row(
                   children: [
-                    // The Name
                     Flexible(
                       child: Text(
                         person.name,
@@ -244,14 +251,13 @@ class SearchScreen extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(width: 6), // Space between name and gender
-                    // The Gender Icon
+                    const SizedBox(width: 6),
                     Icon(
                       person.gender.toLowerCase() == 'male'
                           ? Icons.male
                           : person.gender.toLowerCase() == 'female'
                           ? Icons.female
-                          : Icons.transgender, // Fallback icon
+                          : Icons.transgender,
                       size: 16,
                       color: person.gender.toLowerCase() == 'male'
                           ? Colors.blue
@@ -259,19 +265,9 @@ class SearchScreen extends StatelessWidget {
                           ? Colors.pink
                           : Colors.grey,
                     ),
-
-                    // Optional: If you prefer text instead of an icon, delete the Icon above and uncomment below:
-                    /*
-                    Text(
-                      " (${person.gender})",
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    */
                   ],
                 ),
-
-                // --- MODIFIED SECTION END ---
-                const SizedBox(height: 2), // Slight vertical spacing
+                const SizedBox(height: 2),
                 Text(
                   person.skills.take(2).join(", "),
                   style: const TextStyle(color: Colors.grey, fontSize: 12),

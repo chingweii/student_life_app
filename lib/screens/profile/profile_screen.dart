@@ -1,70 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_life_app/screens/profile/settings_screen.dart';
+import 'package:student_life_app/screens/profile/add_skill_bottom_sheet.dart';
+import 'package:student_life_app/screens/profile/edit_profile_screen.dart';
 
 enum Gender { male, female, other }
 
-// --- Data Models ---
-class UserProfile {
-  final String name;
-  final String imageUrl;
-  final String degree;
-  final String location;
-  final Gender gender;
-
-  UserProfile({
-    required this.name,
-    required this.imageUrl,
-    required this.degree,
-    required this.location,
-    required this.gender,
-  });
-}
-
-class Skill {
-  final String title;
-  final String subtitle;
-  final String description;
-
-  Skill({
-    required this.title,
-    required this.subtitle,
-    required this.description,
-  });
-}
-
-// --- Mock Data ---
-final userProfile = UserProfile(
-  name: 'Chong Kai Xin',
-  imageUrl: 'assets/images/user_avatar.png', // Make sure you have this asset
-  degree: 'Bachelor of Science in Computer Science',
-  location: 'Selangor, Malaysia',
-  gender: Gender.female,
-);
-
-final List<Skill> mockSkills = [
-  Skill(
-    title: 'Python Programming',
-    subtitle: 'Verification',
-    description:
-        'Python Institute PCAP (Certified Associate in Python Programming)',
-  ),
-  Skill(
-    title: 'Japanese',
-    subtitle: 'Verification',
-    description: 'Japanese-Language Proficiency Test N3',
-  ),
-  Skill(
-    title: 'Public Speaking',
-    subtitle: 'Experience',
-    description: 'Emcee for Events of Sunway Tech Club',
-  ),
-];
-
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final User? currentUser = FirebaseAuth.instance.currentUser;
+
+  @override
   Widget build(BuildContext context) {
+    if (currentUser == null) {
+      return const Scaffold(
+        body: Center(child: Text("Please login to view profile")),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -75,9 +35,9 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  _buildProfileHeader(context),
+                  _buildProfileStream(),
                   const SizedBox(height: 40),
-                  _buildSkillsSection(),
+                  _buildSkillsStream(),
                 ],
               ),
             ),
@@ -87,36 +47,104 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  // Helper widget for the top profile section
-  Widget _buildProfileHeader(BuildContext context) {
+  Widget _buildProfileStream() {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser!.uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        }
+
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return const Text("Profile not found.");
+        }
+
+        var data = snapshot.data!.data() as Map<String, dynamic>;
+
+        String firstName = data['first_name'] ?? '';
+        String lastName = data['last_name'] ?? '';
+        String fullName = '$firstName $lastName'.trim();
+        String degree = data['degree'] ?? 'Add your degree';
+        String location = data['location'] ?? 'Add location';
+
+        // --- CHANGE 1: Extract the profile image URL from database ---
+        String? profilePicUrl = data['profile_pic_url'];
+
+        String genderString = data['gender'] ?? 'other';
+        Gender genderEnum;
+        if (genderString.toLowerCase() == 'male') {
+          genderEnum = Gender.male;
+        } else if (genderString.toLowerCase() == 'female') {
+          genderEnum = Gender.female;
+        } else {
+          genderEnum = Gender.other;
+        }
+
+        return _buildProfileHeader(
+          context,
+          fullName,
+          degree,
+          location,
+          genderEnum,
+          profilePicUrl, // --- CHANGE 2: Pass the URL to the widget ---
+        );
+      },
+    );
+  }
+
+  // --- UI Helpers ---
+
+  Widget _buildProfileHeader(
+    BuildContext context,
+    String name,
+    String degree,
+    String location,
+    Gender gender,
+    String? imageUrl, // --- CHANGE 3a: Accept the URL as a parameter ---
+  ) {
+    // --- CHANGE 3b: Determine which image provider to use ---
+    ImageProvider backgroundImage;
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      backgroundImage = NetworkImage(imageUrl); // Use Firebase URL
+    } else {
+      backgroundImage = const AssetImage(
+        'assets/images/user_avatar.png',
+      ); // Use Default
+    }
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CircleAvatar(
           backgroundColor: const Color.fromARGB(255, 243, 239, 239),
           radius: 70,
-          backgroundImage: AssetImage(userProfile.imageUrl),
+          backgroundImage: backgroundImage, // Apply the image here
         ),
 
-        const SizedBox(width: 20), // more space between avatar and text
+        const SizedBox(width: 20),
 
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-
             children: [
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    userProfile.name,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                  Flexible(
+                    child: Text(
+                      name.isEmpty ? "User" : name,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const SizedBox(width: 2), // Spacing
-                  _buildGenderIcon(userProfile.gender), // Helper for icon
+                  const SizedBox(width: 2),
+                  _buildGenderIcon(gender),
                 ],
               ),
 
@@ -128,37 +156,11 @@ class ProfileScreen extends StatelessWidget {
                     Icons.school,
                     size: 18,
                     color: Color.fromARGB(255, 68, 68, 68),
-                  ), // Smaller icon
-
-                  const SizedBox(width: 4),
-
-                  Expanded(
-                    child: Text(
-                      userProfile.degree,
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 68, 68, 68),
-                        fontSize: 13,
-                      ), // Smaller font size
-                    ),
                   ),
-                ],
-              ),
-
-              const SizedBox(height: 4), // Reduced space
-
-              Row(
-                children: [
-                  const Icon(
-                    Icons.location_on,
-                    size: 18,
-                    color: Color.fromARGB(255, 68, 68, 68),
-                  ), // Smaller icon
-
                   const SizedBox(width: 4),
-
                   Expanded(
                     child: Text(
-                      userProfile.location,
+                      degree,
                       style: const TextStyle(
                         color: Color.fromARGB(255, 68, 68, 68),
                         fontSize: 13,
@@ -168,12 +170,41 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 18), // Adjusted spacing before buttons
+              const SizedBox(height: 4),
+
+              Row(
+                children: [
+                  const Icon(
+                    Icons.location_on,
+                    size: 18,
+                    color: Color.fromARGB(255, 68, 68, 68),
+                  ),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      location,
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 68, 68, 68),
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 18),
 
               Row(
                 children: [
                   OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const EditProfileScreen(),
+                        ),
+                      );
+                    },
                     child: const Text(
                       'Edit Profile',
                       style: TextStyle(fontSize: 13),
@@ -188,9 +219,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   const SizedBox(width: 8),
-
                   OutlinedButton(
                     onPressed: () {
                       Navigator.push(
@@ -215,37 +244,80 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  // Helper widget for the "My Skills" section
-  Widget _buildSkillsSection() {
-    return Column(
-      children: [
-        const Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            'My Skills',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-        ),
-        const SizedBox(height: 16),
-        // Create a list of skill cards from the mock data
-        ...mockSkills.map((skill) => _buildSkillCard(skill)).toList(),
-        const SizedBox(height: 16),
-        TextButton.icon(
-          onPressed: () {},
-          icon: const Icon(Icons.add),
-          label: const Text('Add Skill'),
-        ),
-      ],
+  // ... (Keep your _buildSkillsStream, _buildSkillCard, _buildGenderIcon, and _showAddSkillDialog exactly the same as before) ...
+
+  // (I omitted them here to save space, but DO NOT delete them from your file)
+  Widget _buildSkillsStream() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser!.uid)
+          .collection('skills')
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Text('Something went wrong');
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        }
+
+        var docs = snapshot.data?.docs ?? [];
+
+        return Column(
+          children: [
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'My Skills',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            if (docs.isEmpty)
+              const Text(
+                "No skills added yet.",
+                style: TextStyle(color: Colors.grey),
+              ),
+
+            // Map the Firestore documents to Widgets
+            ...docs.map((doc) {
+              var skillData = doc.data() as Map<String, dynamic>;
+              return _buildSkillCard(
+                doc.id, // Pass ID for deletion
+                skillData['title'] ?? 'No Title',
+                skillData['subtitle'] ?? '',
+                skillData['description'] ?? '',
+              );
+            }).toList(),
+
+            const SizedBox(height: 16),
+
+            TextButton.icon(
+              onPressed: () {
+                _showAddSkillDialog();
+              },
+              icon: const Icon(Icons.add),
+              label: const Text('Add Skill'),
+            ),
+          ],
+        );
+      },
     );
   }
 
-  // skill card
-  Widget _buildSkillCard(Skill skill) {
+  Widget _buildSkillCard(
+    String docId, // We need this ID to know which one to delete
+    String title,
+    String subtitle,
+    String description,
+  ) {
     return Card(
       color: const Color.fromARGB(255, 243, 239, 239),
       margin: const EdgeInsets.only(bottom: 16.0),
       elevation: 2,
-      shadowColor: Color.fromARGB(255, 68, 68, 68).withOpacity(0.2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -256,7 +328,7 @@ class ProfileScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    skill.title,
+                    title,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -264,22 +336,35 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    skill.subtitle,
+                    subtitle, // Displaying Category here
                     style: const TextStyle(
                       color: Color.fromARGB(255, 68, 68, 68),
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(skill.description),
+                  Text(description), // Displaying Description here
                 ],
               ),
             ),
             IconButton(
-              icon: const Icon(
-                Icons.delete_outline,
-                color: Color.fromARGB(255, 68, 68, 68),
-              ),
-              onPressed: () {},
+              icon: const Icon(Icons.delete_outline, color: Colors.grey),
+              onPressed: () async {
+                // 1. Delete from Sub-collection (Detailed data)
+                await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(currentUser!.uid)
+                    .collection('skills')
+                    .doc(docId)
+                    .delete();
+
+                // 2. NEW: Remove from Main Document Array (Summary data)
+                await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(currentUser!.uid)
+                    .update({
+                      'skills': FieldValue.arrayRemove([title]),
+                    });
+              },
             ),
           ],
         ),
@@ -301,15 +386,23 @@ class ProfileScreen extends StatelessWidget {
         iconColor = Colors.pink;
         break;
       case Gender.other:
-        iconData = Icons.transgender; // Or Icons.help_outline
+        iconData = Icons.transgender;
         iconColor = Colors.purple;
         break;
     }
 
-    return Icon(
-      iconData,
-      color: iconColor,
-      size: 22, // Adjust size to match the text
+    return Icon(iconData, color: iconColor, size: 22);
+  }
+
+  void _showAddSkillDialog() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => const AddSkillBottomSheet(),
     );
   }
 }

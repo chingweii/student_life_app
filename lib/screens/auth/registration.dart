@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:student_life_app/screens/auth/login.dart';
 import 'package:student_life_app/navigation.dart';
-import 'package:student_life_app/screens/auth/verification.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -16,19 +15,24 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
+
+  // 1. UPDATED CONTROLLERS
+  final _firstNameController = TextEditingController(); // NEW
+  final _lastNameController = TextEditingController(); // NEW
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _usernameController = TextEditingController();
 
   bool _isSigningIn = false;
 
   @override
   void dispose() {
+    // 2. DISPOSE NEW CONTROLLERS
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
-    _usernameController.dispose();
     super.dispose();
   }
 
@@ -37,18 +41,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9FB),
       body: SafeArea(
-        // Use SingleChildScrollView to prevent UI overflow when the keyboard appears
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 24.0,
               vertical: 16.0,
             ),
-
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Back Button
                 IconButton(
                   icon: const Icon(Icons.arrow_back_ios),
                   onPressed: () => Navigator.of(context).pop(),
@@ -58,7 +59,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                 const SizedBox(height: 30),
 
-                // Header Text
                 const Text(
                   'Create Account',
                   style: TextStyle(
@@ -74,19 +74,41 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      // Username Field
-                      TextFormField(
-                        controller: _usernameController,
-                        keyboardType: TextInputType.text,
-                        decoration: _inputDecoration('Username'),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a username';
-                          }
-                          return null;
-                        },
+                      // 3. NEW FIRST NAME & LAST NAME UI (Side-by-Side)
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _firstNameController,
+                              keyboardType: TextInputType.text,
+                              decoration: _inputDecoration('First Name'),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Required';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 16), // Spacing between fields
+                          Expanded(
+                            child: TextFormField(
+                              controller: _lastNameController,
+                              keyboardType: TextInputType.text,
+                              decoration: _inputDecoration('Last Name'),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Required';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
                       ),
+
                       const SizedBox(height: 20),
+
                       // Email Field
                       TextFormField(
                         controller: _emailController,
@@ -158,7 +180,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                 const SizedBox(height: 20),
 
-                // "Already have an account" Button
                 Center(
                   child: TextButton(
                     onPressed: () {
@@ -182,7 +203,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                 const SizedBox(height: 30),
 
-                // Divider and Social Logins (reused from login screen)
                 _buildDivider(),
                 const SizedBox(height: 30),
                 Row(
@@ -191,21 +211,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     _buildSocialButton(
                       icon: FontAwesomeIcons.google,
                       onPressed: _signInWithGoogle,
-                    ), // Google
-
+                    ),
                     const SizedBox(width: 20),
-
                     _buildSocialButton(
                       icon: Icons.phone_android,
                       onPressed: () {},
-                    ), // Phone
-
+                    ),
                     const SizedBox(width: 20),
-
-                    _buildSocialButton(
-                      icon: Icons.apple,
-                      onPressed: () {},
-                    ), // Apple
+                    _buildSocialButton(icon: Icons.apple, onPressed: () {}),
                   ],
                 ),
               ],
@@ -216,7 +229,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  // Helper method for consistent input field styling
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
@@ -238,7 +250,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  // Helper method for the "Or continue with" divider
   Widget _buildDivider() {
     return Row(
       children: [
@@ -255,7 +266,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  // Helper method for the social login buttons
   Widget _buildSocialButton({
     required IconData icon,
     required VoidCallback onPressed,
@@ -284,7 +294,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     ).showSnackBar(const SnackBar(content: Text('Processing Data...')));
 
     try {
-      // create user in firebase auth
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
             email: _emailController.text.trim(),
@@ -295,8 +304,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       CollectionReference usersCollection = FirebaseFirestore.instance
           .collection('users');
 
+      // 4. SAVE FIRST & LAST NAME TO FIRESTORE
       await usersCollection.doc(uid).set({
-        'username': _usernameController.text.trim(),
+        'first_name': _firstNameController.text.trim(), // Updated key
+        'last_name': _lastNameController.text.trim(), // Updated key
         'email': _emailController.text.trim(),
         'created_at': FieldValue.serverTimestamp(),
       });
@@ -339,60 +350,56 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     });
 
     try {
-      // 1. Trigger the Google Sign-In flow
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       if (googleUser == null) {
-        // The user canceled the sign-in
         setState(() {
           _isSigningIn = false;
         });
         return;
       }
 
-      // 2. Obtain authentication details from the request
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
-      // 3. Create a new Firebase credential
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      // 4. Sign in to Firebase with the credential
       final UserCredential userCredential = await FirebaseAuth.instance
           .signInWithCredential(credential);
       final User? user = userCredential.user;
 
       if (user != null) {
-        // 5. Check if user is NEW and save to Firestore
-        // This is crucial for new registrations!
         if (userCredential.additionalUserInfo?.isNewUser == true) {
           CollectionReference usersCollection = FirebaseFirestore.instance
               .collection('users');
+
+          // 5. SPLIT GOOGLE NAME INTO FIRST/LAST
+          String fullName = user.displayName ?? 'Google User';
+          List<String> nameParts = fullName.split(' ');
+          String fName = nameParts.isNotEmpty ? nameParts.first : 'User';
+          String lName = nameParts.length > 1
+              ? nameParts.sublist(1).join(' ')
+              : ''; // Leave empty if single name
+
           await usersCollection.doc(user.uid).set({
-            'username':
-                user.displayName ?? 'Google User', // From Google profile
-            'email': user.email, // From Google profile
+            'first_name': fName, // Save split name
+            'last_name': lName, // Save split name
+            'email': user.email,
             'created_at': FieldValue.serverTimestamp(),
-            // You could also save the profile picture!
-            // 'profile_pic_url': user.photoURL,
           });
         }
 
-        // 6. Navigate to the main app screen
-        // Google users are already verified, so we skip VerificationScreen
         if (mounted) {
           Navigator.pushReplacement(
             context,
-            // Assuming NavigationScreen is your main app page
             MaterialPageRoute(builder: (context) => const NavigationScreen()),
           );
         }
       }
     } catch (e) {
-      // Handle errors
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
