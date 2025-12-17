@@ -5,6 +5,10 @@ import 'package:student_life_app/screens/profile/settings_screen.dart';
 import 'package:student_life_app/screens/profile/add_skill_bottom_sheet.dart';
 import 'package:student_life_app/screens/profile/edit_profile_screen.dart';
 
+// --- IMPORTANT: Import Event Details Screen so we can click on the card ---
+import 'package:student_life_app/screens/clubs/event_details_screen.dart';
+import 'package:student_life_app/models/event_model.dart';
+
 enum Gender { male, female, other }
 
 class ProfileScreen extends StatefulWidget {
@@ -36,6 +40,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   const SizedBox(height: 20),
                   _buildProfileStream(),
+
+                  const SizedBox(height: 40),
+                  // --- NEW SECTION HERE ---
+                  _buildRegisteredEventsStream(),
+
                   const SizedBox(height: 40),
                   _buildSkillsStream(),
                 ],
@@ -47,6 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  // ... (Keep _buildProfileStream and _buildProfileHeader exactly the same) ...
   Widget _buildProfileStream() {
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
@@ -69,10 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         String fullName = '$firstName $lastName'.trim();
         String degree = data['degree'] ?? 'Add your degree';
         String location = data['location'] ?? 'Add location';
-
-        // --- CHANGE 1: Extract the profile image URL from database ---
         String? profilePicUrl = data['profile_pic_url'];
-
         String genderString = data['gender'] ?? 'other';
         Gender genderEnum;
         if (genderString.toLowerCase() == 'male') {
@@ -89,13 +96,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           degree,
           location,
           genderEnum,
-          profilePicUrl, // --- CHANGE 2: Pass the URL to the widget ---
+          profilePicUrl,
         );
       },
     );
   }
-
-  // --- UI Helpers ---
 
   Widget _buildProfileHeader(
     BuildContext context,
@@ -103,16 +108,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String degree,
     String location,
     Gender gender,
-    String? imageUrl, // --- CHANGE 3a: Accept the URL as a parameter ---
+    String? imageUrl,
   ) {
-    // --- CHANGE 3b: Determine which image provider to use ---
     ImageProvider backgroundImage;
     if (imageUrl != null && imageUrl.isNotEmpty) {
-      backgroundImage = NetworkImage(imageUrl); // Use Firebase URL
+      backgroundImage = NetworkImage(imageUrl);
     } else {
-      backgroundImage = const AssetImage(
-        'assets/images/user_avatar.png',
-      ); // Use Default
+      backgroundImage = const AssetImage('assets/images/user_avatar.png');
     }
 
     return Row(
@@ -121,7 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         CircleAvatar(
           backgroundColor: const Color.fromARGB(255, 243, 239, 239),
           radius: 70,
-          backgroundImage: backgroundImage, // Apply the image here
+          backgroundImage: backgroundImage,
         ),
 
         const SizedBox(width: 20),
@@ -147,9 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildGenderIcon(gender),
                 ],
               ),
-
               const SizedBox(height: 6),
-
               Row(
                 children: [
                   const Icon(
@@ -169,9 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 4),
-
               Row(
                 children: [
                   const Icon(
@@ -191,9 +189,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 18),
-
               Row(
                 children: [
                   OutlinedButton(
@@ -244,9 +240,176 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // ... (Keep your _buildSkillsStream, _buildSkillCard, _buildGenderIcon, and _showAddSkillDialog exactly the same as before) ...
+  // --- NEW: WIDGET TO SHOW REGISTERED EVENTS ---
+  Widget _buildRegisteredEventsStream() {
+    return StreamBuilder<QuerySnapshot>(
+      // 1. Listen to the user's specific 'my_events' collection
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser!.uid)
+          .collection('my_events')
+          .orderBy('registeredAt', descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) return const Text('Error loading events');
 
-  // (I omitted them here to save space, but DO NOT delete them from your file)
+        // Show nothing while loading or if no data, to keep UI clean
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox.shrink();
+        }
+
+        final docs = snapshot.data?.docs ?? [];
+
+        if (docs.isEmpty)
+          return const SizedBox.shrink(); // Don't show section if empty
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Registered Events',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+
+            SizedBox(
+              height: 140, // Fixed height for horizontal scrolling card list
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: docs.length,
+                itemBuilder: (context, index) {
+                  final userEventData =
+                      docs[index].data() as Map<String, dynamic>;
+                  final eventId = userEventData['eventId'];
+
+                  // 2. Fetch the ACTUAL event details using the ID
+                  return FutureBuilder<DocumentSnapshot>(
+                    future: FirebaseFirestore.instance
+                        .collection('events')
+                        .doc(eventId)
+                        .get(),
+                    builder: (context, eventSnapshot) {
+                      if (!eventSnapshot.hasData) {
+                        return _buildLoadingEventCard();
+                      }
+
+                      // If the event was deleted by admin but still in user profile
+                      if (!eventSnapshot.data!.exists) {
+                        return const SizedBox.shrink();
+                      }
+
+                      // Convert Firestore data to Event Model
+                      final eventData =
+                          eventSnapshot.data!.data() as Map<String, dynamic>;
+                      final eventObj = Event.fromFirestore(
+                        eventData,
+                        eventSnapshot.data!.id,
+                      );
+
+                      return _buildRegisteredEventCard(eventObj);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildLoadingEventCard() {
+    return Container(
+      width: 200,
+      margin: const EdgeInsets.only(right: 12),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+    );
+  }
+
+  Widget _buildRegisteredEventCard(Event event) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EventDetailsScreen(event: event),
+          ),
+        );
+      },
+      child: Container(
+        width: 220,
+        margin: const EdgeInsets.only(right: 12, bottom: 4),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF3EFEF), // Same as skills card
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              event.title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
+                const SizedBox(width: 4),
+                // Assuming date is a DateTime object in your model
+                Text(
+                  "${event.date.day}/${event.date.month}",
+                  style: const TextStyle(fontSize: 13, color: Colors.black87),
+                ),
+                const SizedBox(width: 8),
+                const Icon(Icons.access_time, size: 14, color: Colors.grey),
+                const SizedBox(width: 4),
+                Flexible(
+                  child: Text(
+                    event.time.split(' to ')[0], // Just show start time
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 13, color: Colors.black87),
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.green[100],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text(
+                "Going",
+                style: TextStyle(
+                  color: Colors.green,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ... (Keep your _buildSkillsStream, _buildSkillCard, _buildGenderIcon, and _showAddSkillDialog exactly the same) ...
+
   Widget _buildSkillsStream() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
@@ -308,8 +471,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  // ... (Paste _buildSkillCard, _buildGenderIcon, _showAddSkillDialog here) ...
   Widget _buildSkillCard(
-    String docId, // We need this ID to know which one to delete
+    String docId,
     String title,
     String subtitle,
     String description,
@@ -349,7 +513,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             IconButton(
               icon: const Icon(Icons.delete_outline, color: Colors.grey),
               onPressed: () async {
-                // 1. Delete from Sub-collection (Detailed data)
                 await FirebaseFirestore.instance
                     .collection('users')
                     .doc(currentUser!.uid)
@@ -357,7 +520,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     .doc(docId)
                     .delete();
 
-                // 2. NEW: Remove from Main Document Array (Summary data)
                 await FirebaseFirestore.instance
                     .collection('users')
                     .doc(currentUser!.uid)

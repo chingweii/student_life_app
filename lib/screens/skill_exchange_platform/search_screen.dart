@@ -83,7 +83,9 @@ class SearchScreen extends StatelessWidget {
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('users')
-                      .limit(20)
+                      .limit(
+                        500,
+                      ) // CHANGE 1: Increase this to cover your user base (e.g. 100 or 500)
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
@@ -94,9 +96,14 @@ class SearchScreen extends StatelessWidget {
 
                     if (docs.isEmpty) return const Text("No peers found.");
 
-                    List<QueryDocumentSnapshot> shuffledDocs = List.from(docs);
-                    shuffledDocs.shuffle(Random());
-                    List<QueryDocumentSnapshot> randomSelection = shuffledDocs
+                    // CHANGE 2: Create a modifyable list from the docs
+                    List<QueryDocumentSnapshot> allDocs = List.from(docs);
+
+                    // CHANGE 3: Shuffle the entire list of 500 users
+                    allDocs.shuffle(Random());
+
+                    // CHANGE 4: Pick the first 10 from the now-randomized big list
+                    List<QueryDocumentSnapshot> randomSelection = allDocs
                         .take(10)
                         .toList();
 

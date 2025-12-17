@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_life_app/models/person_model.dart';
 import 'package:student_life_app/screens/messaging/messaging.dart';
+import 'package:student_life_app/screens/profile/other_user_profile_screen.dart';
 
 class SearchResultsScreen extends StatefulWidget {
   final String searchQuery; // e.g., "Sports" or "Cheryl"
@@ -224,83 +225,98 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
   }
 
   Widget _buildPersonCard(Person person) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      elevation: 2,
-      shadowColor: Colors.grey.withOpacity(0.1),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundImage: NetworkImage(person.imageUrl),
-              onBackgroundImageError: (_, __) {},
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    person.name,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: () {
+        // Navigate to the public profile screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OtherUserProfileScreen(userID: person.id),
+          ),
+        );
+      },
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        elevation: 2,
+        shadowColor: Colors.grey.withOpacity(0.1),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundImage: NetworkImage(person.imageUrl),
+                onBackgroundImageError: (_, __) {},
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      person.name,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Wrap(
-                    spacing: 8.0,
-                    runSpacing: 8.0,
-                    children: person.skills
-                        .map(
-                          (skill) => Chip(
-                            label: Text(
-                              skill,
-                              style: const TextStyle(fontSize: 10),
+                    const SizedBox(height: 6),
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      children: person.skills
+                          .map(
+                            (skill) => Chip(
+                              label: Text(
+                                skill,
+                                style: const TextStyle(fontSize: 10),
+                              ),
+                              padding: EdgeInsets.zero,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
                             ),
-                            padding: EdgeInsets.zero,
-                            materialTapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
+                          )
+                          .toList(),
+                    ),
+                  ],
+                ),
+              ),
+
+              Column(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.person_add_outlined,
+                      color: Colors.grey[600],
+                    ),
+                    onPressed: () {
+                      // Implement friend request functionality here
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.chat_bubble_outline,
+                      color: Colors.grey[600],
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MessagingScreen(
+                            recipientName: person.name,
+                            recipientImage: person.imageUrl,
+                            recipientUid: person.id,
                           ),
-                        )
-                        .toList(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
-            ),
-            Column(
-              children: [
-                IconButton(
-                  icon: Icon(
-                    Icons.person_add_outlined,
-                    color: Colors.grey[600],
-                  ),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.chat_bubble_outline,
-                    color: Colors.grey[600],
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MessagingScreen(
-                          recipientName: person.name,
-                          recipientImage: person.imageUrl,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

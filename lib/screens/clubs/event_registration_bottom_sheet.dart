@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Make sure this is imported at the top too
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // 1. IMPORT THIS
 
 class RegistrationBottomSheet extends StatefulWidget {
-  final String eventId; // Defined here so the button can pass it
-  final String eventTitle; // Defined here so the button can pass it
+  final String eventId;
+  final String eventTitle;
 
   const RegistrationBottomSheet({
     super.key,
@@ -28,6 +29,9 @@ class _RegistrationBottomSheetState extends State<RegistrationBottomSheet> {
     final String id = _idController.text.trim();
     final String email = _emailController.text.trim();
 
+    // Get Current Logged in User
+    final User? currentUser = FirebaseAuth.instance.currentUser; // 2. GET USER
+
     if (name.isEmpty || id.isEmpty || email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all fields')),
@@ -35,23 +39,67 @@ class _RegistrationBottomSheetState extends State<RegistrationBottomSheet> {
       return;
     }
 
+    // Safety check: Ensure user is logged in
+    if (currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You must be logged in to register.')),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {
-      // Logic to save to: events -> [evt_050] -> registrations
-      await FirebaseFirestore.instance
+      final eventRef = FirebaseFirestore.instance
           .collection('events')
-          .doc(widget.eventId)
-          .collection('registrations')
-          .add({
-            'fullName': name,
-            'studentID': id,
-            'email': email,
+          .doc(widget.eventId);
+      final registrationRef = eventRef.collection('registrations');
+
+      // 1. CHECK FOR DUPLICATES
+      final QuerySnapshot existingCheck = await registrationRef
+          .where('studentID', isEqualTo: id)
+          .limit(1)
+          .get();
+
+      if (existingCheck.docs.isNotEmpty) {
+        if (mounted) {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Student ID $id is already registered!'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+
+      // 2. PROCEED TO REGISTER (Event Side)
+      await registrationRef.add({
+        'fullName': name,
+        'studentID': id,
+        'email': email,
+        'registeredAt': FieldValue.serverTimestamp(),
+        'userUid': currentUser.uid, // Store the UID for reference
+      });
+
+      // 3. NEW: SAVE TO USER PROFILE (User Side)
+      // This allows the Profile Screen to find the event easily!
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('my_events') // A new sub-collection for the user
+          .doc(
+            widget.eventId,
+          ) // Use event ID as document ID to prevent duplicates
+          .set({
+            'eventId': widget.eventId,
+            'eventTitle': widget.eventTitle,
             'registeredAt': FieldValue.serverTimestamp(),
           });
 
       if (mounted) {
-        Navigator.pop(context); // Close the sheet
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Registered for ${widget.eventTitle}!')),
         );
@@ -67,6 +115,7 @@ class _RegistrationBottomSheetState extends State<RegistrationBottomSheet> {
     }
   }
 
+  // ... (dispose and build methods remain exactly the same as your code) ...
   @override
   void dispose() {
     _nameController.dispose();
@@ -77,6 +126,7 @@ class _RegistrationBottomSheetState extends State<RegistrationBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    // ... (Your existing build code) ...
     return FractionallySizedBox(
       heightFactor: 0.5,
       child: Padding(

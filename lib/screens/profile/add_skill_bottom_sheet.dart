@@ -91,117 +91,119 @@ class _AddSkillBottomSheetState extends State<AddSkillBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    // Determine keyboard padding
+    // 1. Get the keyboard height
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
 
-    return FractionallySizedBox(
-      heightFactor: 0.65,
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 16,
-          bottom: bottomPadding + 16, // Adjust for keyboard
-        ),
+    // 2. Remove FractionallySizedBox. Return Padding directly.
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 16,
+        // This pushes the sheet up when keyboard opens
+        bottom: bottomPadding + 16,
+      ),
+      // 3. Wrap everything in SingleChildScrollView so it scrolls if screen is small
+      child: SingleChildScrollView(
         child: Column(
+          // 4. "Auto Fit": Make the column only as tall as its content
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Handle Bar
-            Container(
-              width: 80,
-              height: 5,
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(12),
+            Center(
+              child: Container(
+                width: 80,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(height: 25),
 
-            const Text(
-              'Add New Skill',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            const Center(
+              child: Text(
+                'Add New Skill',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
             ),
 
             const SizedBox(height: 24),
 
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 1. Skill Name
-                    TextField(
-                      controller: _skillController,
-                      decoration: InputDecoration(
-                        labelText: 'Skill Name*',
-                        hintText: 'e.g., Python, Public Speaking',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
+            // --- FORM FIELDS (No Expanded needed) ---
 
-                    // 2. Category Dropdown
-                    DropdownButtonFormField<String>(
-                      value: _selectedCategory,
-                      decoration: InputDecoration(
-                        labelText: 'Category',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      items: _categories.map((String category) {
-                        return DropdownMenuItem<String>(
-                          value: category,
-                          child: Text(category),
-                        );
-                      }).toList(),
-                      onChanged: (newValue) {
-                        setState(() => _selectedCategory = newValue!);
-                      },
-                    ),
-                    const SizedBox(height: 20),
+            // 1. Skill Name
+            TextField(
+              controller: _skillController,
+              decoration: InputDecoration(
+                labelText: 'Skill Name*',
+                hintText: 'e.g., Python, Public Speaking',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
 
-                    // 3. Proficiency Dropdown
-                    DropdownButtonFormField<String>(
-                      value: _selectedProficiency,
-                      decoration: InputDecoration(
-                        labelText: 'Proficiency Level',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      items: _proficiencyLevels.map((String level) {
-                        return DropdownMenuItem<String>(
-                          value: level,
-                          child: Text(level),
-                        );
-                      }).toList(),
-                      onChanged: (newValue) {
-                        setState(() => _selectedProficiency = newValue!);
-                      },
-                    ),
-                    const SizedBox(height: 20),
+            // 2. Category Dropdown
+            DropdownButtonFormField<String>(
+              value: _selectedCategory,
+              decoration: InputDecoration(
+                labelText: 'Category',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              items: _categories.map((String category) {
+                return DropdownMenuItem<String>(
+                  value: category,
+                  child: Text(category),
+                );
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() => _selectedCategory = newValue!);
+              },
+            ),
+            const SizedBox(height: 20),
 
-                    // 4. Description / Certification
-                    TextField(
-                      controller: _descriptionController,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        labelText: 'Description / Certification',
-                        hintText:
-                            'e.g., PCAP Certified, or "Used in Final Year Project"',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                  ],
+            // 3. Proficiency Dropdown
+            DropdownButtonFormField<String>(
+              value: _selectedProficiency,
+              decoration: InputDecoration(
+                labelText: 'Proficiency Level',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              items: _proficiencyLevels.map((String level) {
+                return DropdownMenuItem<String>(
+                  value: level,
+                  child: Text(level),
+                );
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() => _selectedProficiency = newValue!);
+              },
+            ),
+            const SizedBox(height: 20),
+
+            // 4. Description / Certification
+            TextField(
+              controller: _descriptionController,
+              maxLines: 3,
+              decoration: InputDecoration(
+                labelText: 'Description / Certification',
+                hintText:
+                    'e.g., PCAP Certified, or "Used in Final Year Project"',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
 
             // Submit Button
             SizedBox(
@@ -228,7 +230,7 @@ class _AddSkillBottomSheetState extends State<AddSkillBottomSheet> {
                     : const Text('Save', style: TextStyle(fontSize: 18)),
               ),
             ),
-            const SizedBox(height: 50),
+            const SizedBox(height: 20), // Little extra padding at bottom
           ],
         ),
       ),

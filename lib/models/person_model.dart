@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Person {
+  final String id;
   final String name;
   final String imageUrl;
   final List<String> skills;
@@ -8,6 +9,7 @@ class Person {
   final String gender;
 
   Person({
+    required this.id,
     required this.name,
     required this.imageUrl,
     required this.skills,
@@ -19,6 +21,7 @@ class Person {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
     return Person(
+      id: doc.id,
       // Combine first and last name
       name: '${data['first_name'] ?? ''} ${data['last_name'] ?? ''}'.trim(),
       // Handle potential null image

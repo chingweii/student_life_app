@@ -18,7 +18,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   // --- CHANGE 1: Swap the screens here ---
   static const List<Widget> _pages = <Widget>[
-    ChatList(), // Index 0
+    ChatsListScreen(), // Index 0
     SearchScreen(), // Index 1
     CalendarScreen(), // Index 2 (Moved Up)
     ChatbotScreen(), // Index 3 (Moved Down)
