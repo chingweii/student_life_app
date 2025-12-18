@@ -57,7 +57,12 @@ class _RegistrationBottomSheetState extends State<RegistrationBottomSheet> {
 
       // 1. CHECK FOR DUPLICATES
       final QuerySnapshot existingCheck = await registrationRef
-          .where('studentID', isEqualTo: id)
+          .where(
+            Filter.or(
+              Filter('studentID', isEqualTo: id),
+              Filter('email', isEqualTo: email),
+            ),
+          )
           .limit(1)
           .get();
 
@@ -65,8 +70,8 @@ class _RegistrationBottomSheetState extends State<RegistrationBottomSheet> {
         if (mounted) {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Student ID $id is already registered!'),
+            const SnackBar(
+              content: Text('This Student ID or Email is already registered!'),
               backgroundColor: Colors.red,
             ),
           );
@@ -126,17 +131,23 @@ class _RegistrationBottomSheetState extends State<RegistrationBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    // ... (Your existing build code) ...
-    return FractionallySizedBox(
-      heightFactor: 0.5,
-      child: Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 16,
-          right: 16,
-          top: 16,
-        ),
+    // 1. Calculate the keyboard height
+    final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
+
+    // 2. Return Padding directly (Remove FractionallySizedBox)
+    return Padding(
+      padding: EdgeInsets.only(
+        // Add the keyboard height to the bottom padding
+        bottom: bottomPadding,
+        left: 16,
+        right: 16,
+        top: 16,
+      ),
+      // 3. Wrap in SingleChildScrollView so it never overflows (Yellow/Black stripes)
+      child: SingleChildScrollView(
         child: Column(
+          // 4. Make the column only as tall as the content (Auto-fit)
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 80,
@@ -185,7 +196,11 @@ class _RegistrationBottomSheetState extends State<RegistrationBottomSheet> {
                 ),
               ),
             ),
-            const Spacer(),
+
+            // 5. REPLACED Spacer() with a fixed SizedBox
+            // Spacer() causes crashes inside SingleChildScrollView
+            const SizedBox(height: 24),
+
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -203,7 +218,8 @@ class _RegistrationBottomSheetState extends State<RegistrationBottomSheet> {
                     : const Text('Submit', style: TextStyle(fontSize: 18)),
               ),
             ),
-            const SizedBox(height: 60),
+            // Add a little safety space at the bottom
+            const SizedBox(height: 20),
           ],
         ),
       ),

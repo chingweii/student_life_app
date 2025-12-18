@@ -4,10 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_life_app/screens/profile/settings_screen.dart';
 import 'package:student_life_app/screens/profile/add_skill_bottom_sheet.dart';
 import 'package:student_life_app/screens/profile/edit_profile_screen.dart';
-
-// --- IMPORTANT: Import Event Details Screen so we can click on the card ---
 import 'package:student_life_app/screens/clubs/event_details_screen.dart';
 import 'package:student_life_app/models/event_model.dart';
+import 'all_registered_events_screen.dart';
 
 enum Gender { male, female, other }
 
@@ -23,40 +22,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (currentUser == null) {
-      return const Scaffold(
-        body: Center(child: Text("Please login to view profile")),
-      );
-    }
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  _buildProfileStream(),
+          // 1. REMOVED: The global Padding(horizontal: 24.0) is gone.
+          // This allows the ListView to touch the right edge of the screen.
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
 
-                  const SizedBox(height: 40),
-                  // --- NEW SECTION HERE ---
-                  _buildRegisteredEventsStream(),
-
-                  const SizedBox(height: 40),
-                  _buildSkillsStream(),
-                ],
+              // 2. ADDED: Padding specifically for the Profile Header
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: _buildProfileStream(),
               ),
-            ),
+
+              const SizedBox(height: 40),
+
+              // Events Section (Handles its own padding logic below)
+              _buildRegisteredEventsStream(),
+
+              const SizedBox(height: 40),
+
+              // 2. ADDED: Padding specifically for the Skills Section
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: _buildSkillsStream(),
+              ),
+
+              // Add some bottom spacing so the last item isn't stuck to the bottom
+              const SizedBox(height: 20),
+            ],
           ),
         ),
       ),
     );
   }
 
-  // ... (Keep _buildProfileStream and _buildProfileHeader exactly the same) ...
+  // ... (Keep _buildProfileStream and _buildProfileHeader EXACTLY the same) ...
   Widget _buildProfileStream() {
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
@@ -125,9 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           radius: 70,
           backgroundImage: backgroundImage,
         ),
-
         const SizedBox(width: 20),
-
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,10 +242,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // --- NEW: WIDGET TO SHOW REGISTERED EVENTS ---
   Widget _buildRegisteredEventsStream() {
     return StreamBuilder<QuerySnapshot>(
-      // 1. Listen to the user's specific 'my_events' collection
       stream: FirebaseFirestore.instance
           .collection('users')
           .doc(currentUser!.uid)
@@ -253,65 +253,101 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (context, snapshot) {
         if (snapshot.hasError) return const Text('Error loading events');
 
-        // Show nothing while loading or if no data, to keep UI clean
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SizedBox.shrink();
         }
 
         final docs = snapshot.data?.docs ?? [];
 
-        if (docs.isEmpty)
-          return const SizedBox.shrink(); // Don't show section if empty
-
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Registered Events',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-
-            SizedBox(
-              height: 140, // Fixed height for horizontal scrolling card list
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: docs.length,
-                itemBuilder: (context, index) {
-                  final userEventData =
-                      docs[index].data() as Map<String, dynamic>;
-                  final eventId = userEventData['eventId'];
-
-                  // 2. Fetch the ACTUAL event details using the ID
-                  return FutureBuilder<DocumentSnapshot>(
-                    future: FirebaseFirestore.instance
-                        .collection('events')
-                        .doc(eventId)
-                        .get(),
-                    builder: (context, eventSnapshot) {
-                      if (!eventSnapshot.hasData) {
-                        return _buildLoadingEventCard();
-                      }
-
-                      // If the event was deleted by admin but still in user profile
-                      if (!eventSnapshot.data!.exists) {
-                        return const SizedBox.shrink();
-                      }
-
-                      // Convert Firestore data to Event Model
-                      final eventData =
-                          eventSnapshot.data!.data() as Map<String, dynamic>;
-                      final eventObj = Event.fromFirestore(
-                        eventData,
-                        eventSnapshot.data!.id,
+            // 3. ADDED: Padding for the Title Row ONLY (so it aligns left)
+            Padding(
+              padding: const EdgeInsets.only(
+                bottom: 16.0,
+                left: 24.0,
+                right: 24.0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Registered Events',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 18,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const AllRegisteredEventsScreen(),
+                        ),
                       );
-
-                      return _buildRegisteredEventCard(eventObj);
                     },
-                  );
-                },
+                  ),
+                ],
               ),
             ),
+
+            if (docs.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "No registered events.",
+                    style: TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+                ),
+              )
+            else
+              SizedBox(
+                height: 140,
+                // 4. MODIFIED: The ListView itself is full-width (no parent padding).
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  // 5. CRITICAL STEP: 'padding' inside the ListView acts as the "Margins".
+                  // It forces the first item to start at 24px (aligned left),
+                  // but allows content to scroll cleanly off the right edge.
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  itemCount: docs.length,
+                  itemBuilder: (context, index) {
+                    final userEventData =
+                        docs[index].data() as Map<String, dynamic>;
+                    final eventId = userEventData['eventId'];
+
+                    return FutureBuilder<DocumentSnapshot>(
+                      future: FirebaseFirestore.instance
+                          .collection('events')
+                          .doc(eventId)
+                          .get(),
+                      builder: (context, eventSnapshot) {
+                        if (!eventSnapshot.hasData) {
+                          return _buildLoadingEventCard();
+                        }
+                        if (!eventSnapshot.data!.exists) {
+                          return const SizedBox.shrink();
+                        }
+
+                        final eventData =
+                            eventSnapshot.data!.data() as Map<String, dynamic>;
+                        final eventObj = Event.fromFirestore(
+                          eventData,
+                          eventSnapshot.data!.id,
+                        );
+
+                        return _buildRegisteredEventCard(eventObj);
+                      },
+                    );
+                  },
+                ),
+              ),
           ],
         );
       },
@@ -345,7 +381,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         margin: const EdgeInsets.only(right: 12, bottom: 4),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: const Color(0xFFF3EFEF), // Same as skills card
+          color: const Color(0xFFF3EFEF),
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -369,7 +405,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
                 const SizedBox(width: 4),
-                // Assuming date is a DateTime object in your model
                 Text(
                   "${event.date.day}/${event.date.month}",
                   style: const TextStyle(fontSize: 13, color: Colors.black87),
@@ -379,7 +414,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(width: 4),
                 Flexible(
                   child: Text(
-                    event.time.split(' to ')[0], // Just show start time
+                    event.time.split(' to ')[0],
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontSize: 13, color: Colors.black87),
                   ),
@@ -407,8 +442,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-
-  // ... (Keep your _buildSkillsStream, _buildSkillCard, _buildGenderIcon, and _showAddSkillDialog exactly the same) ...
 
   Widget _buildSkillsStream() {
     return StreamBuilder<QuerySnapshot>(
@@ -445,11 +478,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: TextStyle(color: Colors.grey),
               ),
 
-            // Map the Firestore documents to Widgets
             ...docs.map((doc) {
               var skillData = doc.data() as Map<String, dynamic>;
               return _buildSkillCard(
-                doc.id, // Pass ID for deletion
+                doc.id,
                 skillData['title'] ?? 'No Title',
                 skillData['subtitle'] ?? '',
                 skillData['description'] ?? '',
@@ -471,7 +503,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // ... (Paste _buildSkillCard, _buildGenderIcon, _showAddSkillDialog here) ...
+  // ... (Keep _buildSkillCard, _buildGenderIcon, and _showAddSkillDialog exactly the same) ...
   Widget _buildSkillCard(
     String docId,
     String title,
@@ -500,13 +532,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    subtitle, // Displaying Category here
+                    subtitle,
                     style: const TextStyle(
                       color: Color.fromARGB(255, 68, 68, 68),
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(description), // Displaying Description here
+                  Text(description),
                 ],
               ),
             ),
@@ -552,7 +584,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         iconColor = Colors.purple;
         break;
     }
-
     return Icon(iconData, color: iconColor, size: 22);
   }
 

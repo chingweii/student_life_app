@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:student_life_app/screens/profile/other_user_profile_screen.dart';
 
 class MessagingScreen extends StatefulWidget {
   final String recipientName;
@@ -36,12 +37,16 @@ class _MessagingScreenState extends State<MessagingScreen> {
     super.initState();
     currentUserId = _auth.currentUser!.uid;
 
-    // 1. GENERATE CONSISTENT CHAT ID
-    // We sort the UIDs so "UserA_UserB" is the same as "UserB_UserA"
-    // This ensures both people enter the EXACT same chat room.
     List<String> ids = [currentUserId, widget.recipientUid];
     ids.sort();
     chatId = ids.join("_");
+    _resetUnreadCount();
+  }
+
+  void _resetUnreadCount() async {
+    await _firestore.collection('chats').doc(chatId).set({
+      'unreadCounts': {currentUserId: 0},
+    }, SetOptions(merge: true));
   }
 
   @override
@@ -50,14 +55,12 @@ class _MessagingScreenState extends State<MessagingScreen> {
     super.dispose();
   }
 
-  // 2. SEND MESSAGE TO FIRESTORE
   void _sendMessage() async {
     String messageText = _messageController.text.trim();
     if (messageText.isEmpty) return;
 
-    _messageController.clear(); // Clear UI immediately for better UX
+    _messageController.clear();
 
-    // A. Add message to the 'messages' sub-collection
     await _firestore
         .collection('chats')
         .doc(chatId)
@@ -69,12 +72,15 @@ class _MessagingScreenState extends State<MessagingScreen> {
           'timestamp': FieldValue.serverTimestamp(),
         });
 
-    // B. Update the 'Chat Room' metadata (for your future Inbox list)
-    // We use set with merge: true so it creates the doc if it doesn't exist
+    // Update the Chat Room metadata
     await _firestore.collection('chats').doc(chatId).set({
       'participants': [currentUserId, widget.recipientUid],
       'lastMessage': messageText,
       'lastMessageTime': FieldValue.serverTimestamp(),
+
+      // <--- ADD THIS SECTION
+      // Increment the count specifically for the RECIPIENT
+      'unreadCounts': {widget.recipientUid: FieldValue.increment(1)},
     }, SetOptions(merge: true));
   }
 
@@ -151,11 +157,34 @@ class _MessagingScreenState extends State<MessagingScreen> {
             ),
           ],
         ),
+
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 6.0),
+            child: IconButton(
+              icon: const Icon(
+                Icons.person_outline,
+                color: Colors.black,
+                size: 26,
+              ),
+              onPressed: () {
+                // Navigate to the OtherUserProfileScreen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OtherUserProfileScreen(
+                      userID: widget.recipientUid, // Pass the recipient's ID
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Column(
           children: [
-            // 3. REAL-TIME STREAM
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: _firestore
@@ -168,7 +197,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
                   if (snapshot.hasError) {
                     return const Center(child: Text("Error loading messages"));
                   }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
+                  if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
                   }
 
@@ -185,7 +214,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
                       bool isSender = data['senderId'] == currentUserId;
                       Timestamp? time = data['timestamp'] as Timestamp?;
 
-                      // --- DATE HEADER LOGIC ---
+                      // Date header logic
                       bool showDateHeader = false;
                       if (index == 0) {
                         // First message always shows date
@@ -208,9 +237,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
                           }
                         }
                       }
-                      // -------------------------
 
-                      // Create the Message Bubble
                       Widget messageWidget;
                       if (isSender) {
                         messageWidget = _buildSenderMessage(
@@ -224,7 +251,6 @@ class _MessagingScreenState extends State<MessagingScreen> {
                         );
                       }
 
-                      // Return Column if we need a Date Header, otherwise just the message
                       if (showDateHeader && time != null) {
                         return Column(
                           children: [
@@ -253,7 +279,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
         margin: const EdgeInsets.symmetric(vertical: 16),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: Colors.grey[300], // Light grey background like WhatsApp
+          color: Colors.grey[300],
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
@@ -272,12 +298,10 @@ class _MessagingScreenState extends State<MessagingScreen> {
     return Align(
       alignment: Alignment.centerRight,
       child: Container(
-        // UPDATED MARGIN: Changed right from 16 to 8
         margin: const EdgeInsets.only(bottom: 10, left: 60, right: 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            // THE BUBBLE
             ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * 0.75,
@@ -303,7 +327,6 @@ class _MessagingScreenState extends State<MessagingScreen> {
               ),
             ),
 
-            // THE TIME
             Padding(
               padding: const EdgeInsets.only(top: 4, right: 0),
               child: Text(
@@ -321,7 +344,6 @@ class _MessagingScreenState extends State<MessagingScreen> {
     return Align(
       alignment: Alignment.centerLeft,
       child: Container(
-        // UPDATED MARGIN: Changed left from 16 to 8
         margin: const EdgeInsets.only(bottom: 10, left: 0, right: 60),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

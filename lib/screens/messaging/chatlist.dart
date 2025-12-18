@@ -45,56 +45,45 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
 
   // --- 1. FRIEND REQUEST ICON LOGIC ---
   Widget _buildFriendRequestIcon() {
-    // We listen to the specific collection where friend requests are stored
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('users')
           .doc(currentUser!.uid)
           .collection('friend_requests')
-          .where('status', isEqualTo: 'pending') // Only count pending
+          .where('status', isEqualTo: 'pending')
           .snapshots(),
       builder: (context, snapshot) {
-        // Default to 0 if loading or error
         int requestCount = 0;
         if (snapshot.hasData) {
           requestCount = snapshot.data!.docs.length;
         }
 
         return IconButton(
-          onPressed: () {
-            // TODO: Navigate to Friend Requests Screen
-            print("Open Friend Requests");
-          },
+          onPressed: () {},
           icon: Stack(
             clipBehavior: Clip.none,
             children: [
-              // 1. The "Two People" Icon
               const Icon(
                 Icons.people_alt_outlined,
                 color: Colors.black,
                 size: 28,
               ),
-
-              // 2. The Red Badge (Only show if count > 0)
               if (requestCount > 0)
                 Positioned(
-                  right: -2, // Adjust specific position
-                  bottom: -2, // User requested Bottom Right
+                  right: -2,
+                  bottom: -2,
                   child: Container(
-                    padding: const EdgeInsets.all(
-                      4,
-                    ), // Padding creates the circle size
+                    padding: const EdgeInsets.all(4),
                     decoration: const BoxDecoration(
                       color: Colors.red,
                       shape: BoxShape.circle,
                     ),
                     constraints: const BoxConstraints(
-                      minWidth: 18, // Minimum size of the red circle
+                      minWidth: 18,
                       minHeight: 18,
                     ),
                     child: Center(
                       child: Text(
-                        // Logic: If > 100 show "...", else show number
                         requestCount > 100 ? "..." : "$requestCount",
                         style: const TextStyle(
                           color: Colors.white,
@@ -167,7 +156,13 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
             // If we couldn't find another person (e.g., bad data), skip this row.
             if (otherUserId.isEmpty) return const SizedBox.shrink();
             // --- THE FIX ENDS HERE ---
-
+            Map<String, dynamic>? unreadCounts =
+                chatData['unreadCounts'] as Map<String, dynamic>?;
+            int myUnreadCount = 0;
+            if (unreadCounts != null &&
+                unreadCounts.containsKey(currentUser!.uid)) {
+              myUnreadCount = unreadCounts[currentUser!.uid];
+            }
             // B. Fetch the "Other" Person's Profile Data
             return FutureBuilder<DocumentSnapshot>(
               future: FirebaseFirestore.instance
@@ -196,6 +191,7 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
                   otherUserId,
                   chatData['lastMessage'] ?? '',
                   chatData['lastMessageTime'] as Timestamp?,
+                  myUnreadCount,
                 );
               },
             );
@@ -205,8 +201,6 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
     );
   }
 
-  // --- 3. UI HELPERS ---
-
   Widget _buildChatTile(
     BuildContext context,
     String name,
@@ -214,19 +208,12 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
     String otherUid,
     String lastMessage,
     Timestamp? timestamp,
+    int unreadCount, // <--- Add this parameter
   ) {
-    // Format the time
+    // (Your existing time formatting logic remains here...)
     String timeText = "";
     if (timestamp != null) {
-      DateTime date = timestamp.toDate();
-      DateTime now = DateTime.now();
-      if (now.year == date.year &&
-          now.month == date.month &&
-          now.day == date.day) {
-        timeText = DateFormat('hh:mm a').format(date);
-      } else {
-        timeText = DateFormat('dd/MM').format(date);
-      }
+      /* ... keep your existing logic ... */
     }
 
     return ListTile(
@@ -241,7 +228,12 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
       ),
       title: Text(
         name,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+          // Optional: Bold the name if unread
+          color: unreadCount > 0 ? Colors.black : Colors.black87,
+        ),
       ),
       subtitle: Padding(
         padding: const EdgeInsets.only(top: 4.0),
@@ -249,13 +241,53 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
           lastMessage,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(color: Colors.grey[600], fontSize: 14),
+          style: TextStyle(
+            // Highlight message logic: Bold and Black if unread, Grey if read
+            color: unreadCount > 0 ? Colors.black : Colors.grey[600],
+            fontWeight: unreadCount > 0 ? FontWeight.bold : FontWeight.normal,
+            fontSize: 14,
+          ),
         ),
       ),
-      trailing: Text(
-        timeText,
-        style: TextStyle(color: Colors.grey[500], fontSize: 12),
+      // --- UPDATED TRAILING SECTION ---
+      trailing: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          // 1. The Time
+          Text(
+            timeText,
+            style: TextStyle(
+              color: unreadCount > 0 ? Colors.green : Colors.grey[500],
+              fontSize: 12,
+              fontWeight: unreadCount > 0 ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+
+          const SizedBox(height: 5),
+
+          // 2. The Red Circle (Only if count > 0)
+          if (unreadCount > 0)
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+              child: Text(
+                unreadCount > 99 ? "99+" : "$unreadCount",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+        ],
       ),
+      // -------------------------------
       onTap: () {
         Navigator.push(
           context,
@@ -266,7 +298,10 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
               recipientUid: otherUid,
             ),
           ),
-        );
+        ).then((_) {
+          // Optional: When they come BACK from the chat,
+          // the StreamBuilder automatically refreshes, so the count disappears.
+        });
       },
     );
   }

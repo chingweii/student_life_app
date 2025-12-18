@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 import 'search_results_screen.dart';
 import 'package:student_life_app/models/person_model.dart';
+import 'package:student_life_app/screens/profile/other_user_profile_screen.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
@@ -85,7 +86,7 @@ class SearchScreen extends StatelessWidget {
                       .collection('users')
                       .limit(
                         500,
-                      ) // CHANGE 1: Increase this to cover your user base (e.g. 100 or 500)
+                      ) 
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
@@ -96,13 +97,11 @@ class SearchScreen extends StatelessWidget {
 
                     if (docs.isEmpty) return const Text("No peers found.");
 
-                    // CHANGE 2: Create a modifyable list from the docs
                     List<QueryDocumentSnapshot> allDocs = List.from(docs);
 
-                    // CHANGE 3: Shuffle the entire list of 500 users
                     allDocs.shuffle(Random());
 
-                    // CHANGE 4: Pick the first 10 from the now-randomized big list
+
                     List<QueryDocumentSnapshot> randomSelection = allDocs
                         .take(10)
                         .toList();
@@ -238,7 +237,6 @@ class SearchScreen extends StatelessWidget {
           CircleAvatar(
             radius: 24,
             backgroundColor: Colors.grey[200],
-            // 2. USE THE NEW HELPER FUNCTION HERE
             backgroundImage: _getProfileImage(person.imageUrl),
           ),
           const SizedBox(width: 12),
@@ -283,6 +281,8 @@ class SearchScreen extends StatelessWidget {
               ],
             ),
           ),
+
+          // --- UPDATED NAVIGATION LOGIC HERE ---
           IconButton(
             icon: const Icon(
               Icons.arrow_forward_ios,
@@ -290,9 +290,18 @@ class SearchScreen extends StatelessWidget {
               color: Colors.grey,
             ),
             onPressed: () {
-              // Your navigation logic
+              // Navigate to OtherUserProfileScreen passing the person's ID
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => OtherUserProfileScreen(
+                    userID: person.id, // Passes the Firestore Document ID
+                  ),
+                ),
+              );
             },
           ),
+          // -------------------------------------
         ],
       ),
     );

@@ -59,7 +59,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         _isLoading = false;
         // Update selected events in case the current day has events
         if (_selectedDay != null) {
-           _selectedEvents = _getEventsForDay(_selectedDay!);
+          _selectedEvents = _getEventsForDay(_selectedDay!);
         }
       });
     } catch (e) {
@@ -95,37 +95,89 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Color _getMarkerColor(Event event) {
     final now = DateTime.now();
 
-    // IMPORTANT: This requires your Event model to have the 'startDateTime' helper.
-    // If you haven't updated your Event model yet, use the 'Fallback' logic below.
+    // 1. Create a clean Date object for "Today" (midnight)
+    final todayDate = DateTime(now.year, now.month, now.day);
 
-    // Try to parse the time from the string "10:00am"
-    try {
-      // 1. Clean the string to get just the start time (e.g. "10:00am")
-      final startTimeString = event.time.split(' to ')[0].trim();
+    // 2. Create a clean Date object for the Event
+    final eventDate = DateTime(
+      event.date.year,
+      event.date.month,
+      event.date.day,
+    );
 
-      // 2. Parse "10:00am"
-      // Note: You might need to import 'package:intl/intl.dart';
-      // If you don't want to use intl, we can do a simpler check based on date only.
-
-      // --- SIMPLIFIED LOGIC (Safest if you didn't update Event Model) ---
-      final eventDate = DateTime(
-        event.date.year,
-        event.date.month,
-        event.date.day,
-      );
-      final today = DateTime(now.year, now.month, now.day);
-
-      if (eventDate.isBefore(today)) {
-        return Colors.red; // Past Date
-      } else if (eventDate.isAfter(today)) {
-        return const Color(0xFF0D47A1); // Future Date
-      } else {
-        return Colors.green; // Today (Ongoing)
-      }
-      // ------------------------------------------------------------------
-    } catch (e) {
-      return Colors.grey; // Fallback color if something breaks
+    // --- CHECK 1: DIFFERENT DAYS ---
+    if (eventDate.isBefore(todayDate)) {
+      return Colors.red; // Past Day
+    } else if (eventDate.isAfter(todayDate)) {
+      return const Color(0xFF0D47A1); // Future Day (Blue)
     }
+
+    // --- CHECK 2: SAME DAY (TIME SENSITIVE) ---
+    // If we are here, it means the event is TODAY.
+    // We must parse the string "5:00pm to 7:00pm" to compare times.
+
+    try {
+      // Split "5:00pm to 7:00pm" into ["5:00pm", "7:00pm"]
+      final timeParts = event.time.split(' to ');
+      final startStr = timeParts[0].trim(); // "5:00pm"
+
+      // If there is an end time, use it. Otherwise, assume event is 1 hour long.
+      final endStr = timeParts.length > 1 ? timeParts[1].trim() : null;
+
+      // Parse Start Time
+      final startTime = _parseDateTime(startStr, eventDate);
+
+      // Parse End Time (or fallback to start + 1 hour)
+      final endTime = endStr != null
+          ? _parseDateTime(endStr, eventDate)
+          : startTime.add(const Duration(hours: 1));
+
+      // --- THE LOGIC YOU REQUESTED ---
+      if (now.isBefore(startTime)) {
+        // Example: Now 4:55pm, Start 5:00pm
+        return const Color(0xFF0D47A1); // Blue (Upcoming today)
+      } else if (now.isAfter(startTime) && now.isBefore(endTime)) {
+        // Example: Now 5:31pm, Start 5:00pm, End 7:00pm
+        return Colors.green; // Green (Happening NOW)
+      } else {
+        // Example: Now 7:01pm
+        return Colors.red; // Red (Finished today)
+      }
+    } catch (e) {
+      // Fallback if parsing fails (e.g. format is wrong)
+      return Colors.grey;
+    }
+  }
+
+  // --- HELPER FUNCTION TO PARSE "5:00pm" ---
+  DateTime _parseDateTime(String timeStr, DateTime originalDate) {
+    // 1. Remove "am" or "pm" to get numbers
+    final isPm = timeStr.toLowerCase().contains('pm');
+    final cleanTime = timeStr
+        .toLowerCase()
+        .replaceAll(RegExp(r'[a-z]'), '')
+        .trim();
+
+    // 2. Split "5:00" into [5, 0]
+    final parts = cleanTime.split(':');
+    int hour = int.parse(parts[0]);
+    int minute = int.parse(parts[1]);
+
+    // 3. Convert to 24-hour format
+    if (isPm && hour != 12) {
+      hour += 12; // 5pm -> 17
+    } else if (!isPm && hour == 12) {
+      hour = 0; // 12am -> 0
+    }
+
+    // 4. Combine with the event date
+    return DateTime(
+      originalDate.year,
+      originalDate.month,
+      originalDate.day,
+      hour,
+      minute,
+    );
   }
 
   @override

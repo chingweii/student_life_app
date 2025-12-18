@@ -33,6 +33,7 @@ class _AddSkillBottomSheetState extends State<AddSkillBottomSheet> {
     'Verification',
     'Education',
     'Project',
+    'Hobby',
   ];
 
   Future<void> _saveSkill() async {

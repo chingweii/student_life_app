@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 enum Gender { male, female, other }
 
 class OtherUserProfileScreen extends StatefulWidget {
-  final String userID; // The ID of the person we are viewing
+  final String userID;
 
   const OtherUserProfileScreen({super.key, required this.userID});
 
@@ -26,72 +26,77 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
         ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.center, // Center everything
-              children: [
-                _buildProfileStream(),
-                const SizedBox(height: 30),
-                // Reusing the skills stream logic, but pointing to the OTHER user
-                _buildSkillsStream(),
-              ],
-            ),
-          ),
+        // 1. We move the Main StreamBuilder to the top level
+        child: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(widget.userID)
+              .snapshots(),
+          builder: (context, userSnapshot) {
+            if (userSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
+              return const Center(child: Text("User not found."));
+            }
+
+            // 2. Extract User Data & Simple Skills Array
+            var userData = userSnapshot.data!.data() as Map<String, dynamic>;
+            List<dynamic> simpleSkillsArray = userData['skills'] ?? [];
+
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Pass the extracted data to the header builder
+                    _buildHeaderFromData(userData),
+                    const SizedBox(height: 30),
+
+                    // 3. Pass the Simple Array to the Skills builder
+                    _buildUnifiedSkillsSection(simpleSkillsArray),
+                    const SizedBox(height: 30),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildProfileStream() {
-    return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .doc(widget.userID) // Fetching data for the specific User ID
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
+  // --- Header Logic ---
+  Widget _buildHeaderFromData(Map<String, dynamic> data) {
+    String firstName = data['first_name'] ?? '';
+    String lastName = data['last_name'] ?? '';
+    String fullName = '$firstName $lastName'.trim();
+    String degree = data['degree'] ?? 'Degree';
+    String location = data['location'] ?? 'Location';
+    String? profilePicUrl = data['profile_pic_url'];
 
-        if (!snapshot.hasData || !snapshot.data!.exists) {
-          return const Text("User not found.");
-        }
+    String genderString = data['gender'] ?? 'other';
+    Gender genderEnum;
+    if (genderString.toLowerCase() == 'male') {
+      genderEnum = Gender.male;
+    } else if (genderString.toLowerCase() == 'female') {
+      genderEnum = Gender.female;
+    } else {
+      genderEnum = Gender.other;
+    }
 
-        var data = snapshot.data!.data() as Map<String, dynamic>;
-
-        String firstName = data['first_name'] ?? '';
-        String lastName = data['last_name'] ?? '';
-        String fullName = '$firstName $lastName'.trim();
-        String degree = data['degree'] ?? 'Degree';
-        String location = data['location'] ?? 'Location';
-        String? profilePicUrl = data['profile_pic_url'];
-
-        // Gender Logic
-        String genderString = data['gender'] ?? 'other';
-        Gender genderEnum;
-        if (genderString.toLowerCase() == 'male') {
-          genderEnum = Gender.male;
-        } else if (genderString.toLowerCase() == 'female') {
-          genderEnum = Gender.female;
-        } else {
-          genderEnum = Gender.other;
-        }
-
-        return _buildCenteredHeader(
-          fullName,
-          degree,
-          location,
-          genderEnum,
-          profilePicUrl,
-        );
-      },
+    return _buildCenteredHeaderUI(
+      fullName,
+      degree,
+      location,
+      genderEnum,
+      profilePicUrl,
     );
   }
 
-  Widget _buildCenteredHeader(
+  Widget _buildCenteredHeaderUI(
     String name,
     String degree,
     String location,
@@ -107,15 +112,12 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
 
     return Column(
       children: [
-        // 1. Profile Picture (Centered)
         CircleAvatar(
           backgroundColor: const Color.fromARGB(255, 243, 239, 239),
-          radius: 60, // Slightly smaller than personal profile for balance
+          radius: 60,
           backgroundImage: backgroundImage,
         ),
         const SizedBox(height: 16),
-
-        // 2. Name + Gender Icon
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -128,8 +130,6 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
           ],
         ),
         const SizedBox(height: 8),
-
-        // 3. Course and Location (Same Horizontal Line)
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -139,7 +139,6 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
               degree,
               style: const TextStyle(color: Colors.grey, fontSize: 14),
             ),
-            const SizedBox(width: 12), // Spacing between items
             const SizedBox(width: 12),
             const Icon(Icons.location_on, size: 16, color: Colors.grey),
             const SizedBox(width: 4),
@@ -149,17 +148,12 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
             ),
           ],
         ),
-
         const SizedBox(height: 24),
-
-        // 4. Action Buttons (Add Friend & More)
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Add Friend Button
             ElevatedButton.icon(
               onPressed: () {
-                // TODO: Implement Add Friend Logic
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Friend Request Sent!")),
                 );
@@ -167,9 +161,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
               icon: const Icon(Icons.person_add, size: 20),
               label: const Text("Add Friend"),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(
-                  0xFF8A84A3,
-                ), // Your app theme color
+                backgroundColor: const Color(0xFF8A84A3),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -181,12 +173,8 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
               ),
             ),
             const SizedBox(width: 12),
-
-            // More Options (Three dots)
             OutlinedButton(
-              onPressed: () {
-                // TODO: Show bottom sheet options (Report, Block, etc.)
-              },
+              onPressed: () {},
               style: OutlinedButton.styleFrom(
                 shape: const CircleBorder(),
                 padding: const EdgeInsets.all(12),
@@ -200,63 +188,93 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
     );
   }
 
-  Widget _buildSkillsStream() {
+  // --- Unified Skills Logic ---
+  Widget _buildUnifiedSkillsSection(List<dynamic> simpleSkillsArray) {
     return StreamBuilder<QuerySnapshot>(
-      // Fetching from the OTHER user's subcollection
+      // 1. Try to fetch from the 'skills' SUBCOLLECTION first
       stream: FirebaseFirestore.instance
           .collection('users')
           .doc(widget.userID)
           .collection('skills')
           .snapshots(),
       builder: (context, snapshot) {
-        if (snapshot.hasError) return const Text('Error loading skills');
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+        // Prepare list of widgets to display
+        List<Widget> skillWidgets = [];
+        bool hasSubcollectionData = false;
+
+        if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+          hasSubcollectionData = true;
+          // CASE A: User has Detailed Skills (Subcollection)
+          skillWidgets = snapshot.data!.docs.map((doc) {
+            var skillData = doc.data() as Map<String, dynamic>;
+            return _buildReadOnlySkillCard(
+              title: skillData['title'] ?? 'No Title',
+              subtitle: skillData['subtitle'],
+              proficiency: skillData['proficiency'],
+              description: skillData['description'],
+            );
+          }).toList();
         }
 
-        var docs = snapshot.data?.docs ?? [];
+        // CASE B: If NO subcollection data, check the Simple Array
+        if (!hasSubcollectionData && simpleSkillsArray.isNotEmpty) {
+          skillWidgets = simpleSkillsArray.map((skillTitle) {
+            return _buildReadOnlySkillCard(
+              title: skillTitle.toString(),
+              // No subtitle/desc available for simple array skills
+              subtitle: null,
+              proficiency: null,
+              description: null,
+            );
+          }).toList();
+        }
 
         return Column(
           children: [
             const Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Skills', // Changed from "My Skills"
+                'Skills',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 16),
 
-            if (docs.isEmpty)
+            if (skillWidgets.isEmpty)
               const Text(
                 "No skills added yet.",
                 style: TextStyle(color: Colors.grey),
-              ),
-
-            ...docs.map((doc) {
-              var skillData = doc.data() as Map<String, dynamic>;
-              return _buildReadOnlySkillCard(
-                skillData['title'] ?? 'No Title',
-                skillData['subtitle'] ?? '',
-                skillData['description'] ?? '',
-              );
-            }).toList(),
+              )
+            else
+              ...skillWidgets,
           ],
         );
       },
     );
   }
 
-  // Same visual design as your profile, but NO Delete button
-  Widget _buildReadOnlySkillCard(
-    String title,
-    String subtitle,
-    String description,
-  ) {
+  Widget _buildReadOnlySkillCard({
+    required String title,
+    String? subtitle,
+    String? proficiency,
+    String? description,
+  }) {
+    String secondLine = '';
+    if (subtitle != null && subtitle.isNotEmpty) {
+      secondLine = subtitle;
+    }
+    if (proficiency != null && proficiency.isNotEmpty) {
+      if (secondLine.isNotEmpty) {
+        secondLine += ' • $proficiency';
+      } else {
+        secondLine = proficiency;
+      }
+    }
+
     return Card(
       color: const Color.fromARGB(255, 243, 239, 239),
       margin: const EdgeInsets.only(bottom: 16.0),
-      elevation: 0, // Flatter look for public view
+      elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -273,21 +291,22 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 68, 68, 68),
+                  if (secondLine.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      secondLine,
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 68, 68, 68),
+                      ),
                     ),
-                  ),
-                  if (description.isNotEmpty) ...[
+                  ],
+                  if (description != null && description.isNotEmpty) ...[
                     const SizedBox(height: 4),
                     Text(description),
                   ],
                 ],
               ),
             ),
-            // Removed the Delete Icon Button here
           ],
         ),
       ),
