@@ -244,58 +244,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildRegisteredEventsStream() {
     return StreamBuilder<QuerySnapshot>(
+      // Keep listening to the user's registrations
       stream: FirebaseFirestore.instance
           .collection('users')
           .doc(currentUser!.uid)
           .collection('my_events')
-          .orderBy('registeredAt', descending: true)
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) return const Text('Error loading events');
 
+        // 1. Basic loading state for the stream
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SizedBox.shrink();
         }
 
         final docs = snapshot.data?.docs ?? [];
 
-        return Column(
-          children: [
-            // 3. ADDED: Padding for the Title Row ONLY (so it aligns left)
-            Padding(
-              padding: const EdgeInsets.only(
-                bottom: 16.0,
-                left: 24.0,
-                right: 24.0,
+        // 2. Title Row (Keep your existing styling)
+        final titleRow = Padding(
+          padding: const EdgeInsets.only(bottom: 16.0, left: 24.0, right: 24.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Registered Events',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Registered Events',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 18,
-                      color: Colors.grey,
+              IconButton(
+                icon: const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 18,
+                  color: Colors.grey,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AllRegisteredEventsScreen(),
                     ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const AllRegisteredEventsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                  );
+                },
               ),
-            ),
+            ],
+          ),
+        );
 
-            if (docs.isEmpty)
+        if (docs.isEmpty) {
+          return Column(
+            children: [
+              titleRow,
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.0),
                 child: Align(
@@ -305,49 +302,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: TextStyle(color: Colors.grey, fontSize: 14),
                   ),
                 ),
-              )
-            else
-              SizedBox(
-                height: 140,
-                // 4. MODIFIED: The ListView itself is full-width (no parent padding).
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  // 5. CRITICAL STEP: 'padding' inside the ListView acts as the "Margins".
-                  // It forces the first item to start at 24px (aligned left),
-                  // but allows content to scroll cleanly off the right edge.
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  itemCount: docs.length,
-                  itemBuilder: (context, index) {
-                    final userEventData =
-                        docs[index].data() as Map<String, dynamic>;
-                    final eventId = userEventData['eventId'];
-
-                    return FutureBuilder<DocumentSnapshot>(
-                      future: FirebaseFirestore.instance
-                          .collection('events')
-                          .doc(eventId)
-                          .get(),
-                      builder: (context, eventSnapshot) {
-                        if (!eventSnapshot.hasData) {
-                          return _buildLoadingEventCard();
-                        }
-                        if (!eventSnapshot.data!.exists) {
-                          return const SizedBox.shrink();
-                        }
-
-                        final eventData =
-                            eventSnapshot.data!.data() as Map<String, dynamic>;
-                        final eventObj = Event.fromFirestore(
-                          eventData,
-                          eventSnapshot.data!.id,
-                        );
-
-                        return _buildRegisteredEventCard(eventObj);
-                      },
-                    );
-                  },
-                ),
               ),
+            ],
+          );
+        }
+
+        // 3. Collect all the 'get' requests into a list of Futures
+        List<Future<DocumentSnapshot>> futureEvents = docs.map((doc) {
+          final userEventData = doc.data() as Map<String, dynamic>;
+          final eventId = userEventData['eventId'];
+          return FirebaseFirestore.instance
+              .collection('events')
+              .doc(eventId)
+              .get();
+        }).toList();
+
+        // 4. Wait for ALL events to load so we can sort them
+        return Column(
+          children: [
+            titleRow,
+            SizedBox(
+              height: 140,
+              // Use FutureBuilder to resolve the list of events
+              child: FutureBuilder<List<DocumentSnapshot>>(
+                future: Future.wait(futureEvents),
+                builder: (context, futureSnapshot) {
+                  if (futureSnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    // Show a few loading skeletons while waiting
+                    return ListView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      children: List.generate(
+                        3,
+                        (index) => _buildLoadingEventCard(),
+                      ),
+                    );
+                  }
+
+                  if (!futureSnapshot.hasData) return const SizedBox.shrink();
+
+                  // 5. Convert snapshots to Event objects
+                  List<Event> eventsList = [];
+                  for (var eventDoc in futureSnapshot.data!) {
+                    if (eventDoc.exists) {
+                      eventsList.add(
+                        Event.fromFirestore(
+                          eventDoc.data() as Map<String, dynamic>,
+                          eventDoc.id,
+                        ),
+                      );
+                    }
+                  }
+
+                  // 6. SORTING MAGIC: Sort by date (ascending)
+                  // This puts the earliest date (nearest) at the left.
+                  eventsList.sort((a, b) => a.date.compareTo(b.date));
+
+                  // Optional: If you want to hide past events, uncomment this:
+                  // eventsList = eventsList.where((e) => e.date.isAfter(DateTime.now().subtract(const Duration(days: 1)))).toList();
+
+                  if (eventsList.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.only(left: 24),
+                      child: Text("Events details unavailable."),
+                    );
+                  }
+
+                  // 7. Render the sorted list
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    itemCount: eventsList.length,
+                    itemBuilder: (context, index) {
+                      return _buildRegisteredEventCard(eventsList[index]);
+                    },
+                  );
+                },
+              ),
+            ),
           ],
         );
       },
